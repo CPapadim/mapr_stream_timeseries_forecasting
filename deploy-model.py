@@ -52,5 +52,5 @@ def rnn_model(array, num_periods):
         FORECAST = y_pred[:,(num_periods-1):num_periods]       #only print out the last prediction, which is the forecast for next period
         
     #Convert the forecast to a serializable format
-    FORECAST = [i[0] for j in FORECAST for i in j]
+    FORECAST = [float(i[0]) for j in FORECAST for i in j]
     return (FORECAST)
