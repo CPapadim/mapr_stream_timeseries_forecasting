@@ -15,7 +15,10 @@ import tensorflow.contrib.rnn as rnn
 
 
 def rnn_model(array, num_periods):
+    
+    #Convert the input list to the format the model expects
     array = np.array([[[i] for i in array]])
+    
     x_data = array.reshape(-1,num_periods,1)
     #print (x_data)
     tf.reset_default_graph()   #We didn't have any previous graph objects running, but this would reset the graphs
@@ -47,4 +50,7 @@ def rnn_model(array, num_periods):
         saver.restore(sess, os.path.join(DIR,"RWsensorTFmodel-1000"))    #restore model         
         y_pred = sess.run(outputs, feed_dict={X: x_data})      #load data from streams
         FORECAST = y_pred[:,(num_periods-1):num_periods]       #only print out the last prediction, which is the forecast for next period
+        
+    #Convert the forecast to a serializable format
+    FORECAST = [i[0] for j in FORECAST for i in j]
     return (FORECAST)
