@@ -15,6 +15,7 @@ import tensorflow.contrib.rnn as rnn
 
 
 def rnn_model(array, num_periods):
+    array = np.array([[[i] for i in array]])
     x_data = array.reshape(-1,num_periods,1)
     #print (x_data)
     tf.reset_default_graph()   #We didn't have any previous graph objects running, but this would reset the graphs
