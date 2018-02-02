@@ -20,11 +20,15 @@ require(plotly)
 
 
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
-json = 
+#url = 'https://jenkins.datascience.com/job/datascienceinc/job/platform/api/json?tree=jobs[url]'
+json = '{"array":[1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1], "num_periods":5}'
 
-req <- httr::GET(url)#,
-                 #set_cookies(`datascience-cookie` = Sys.getenv('MODEL_CREDENTIAL')))
-{"array":[1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1], "num_periods":5}
+req <- httr::GET(url, body=json,
+                 set_cookies(`datascience-cookie` = Sys.getenv('MODEL_CREDENTIAL')))
+
+req <- POST("http://api.scb.se/OV0104/v1/doris/sv/ssd/START/PR/PR0101/PR0101A/KPIFastM2", 
+            body = '{ "query": [], "response": { "format": "json" } }')
+
 branch_dat = fromJSON(httr::content(req, as = "text"))[[2]]
 
 liveish_data <- reactive({
