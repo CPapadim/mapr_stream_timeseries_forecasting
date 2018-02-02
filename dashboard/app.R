@@ -6,9 +6,31 @@
 #
 #    http://shiny.rstudio.com/
 #
-
+#install.packages('rjson')
+#install.packages('lubridate')
+#install.packages('DT')
+library(stringr)
+library(httr)
+library(lubridate)
 library(shiny)
+library(DT)
+require(rjson)
+require(dplyr)
+require(plotly)
 
+
+url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
+json = 
+
+req <- httr::GET(url)#,
+                 #set_cookies(`datascience-cookie` = Sys.getenv('MODEL_CREDENTIAL')))
+{"array":[1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1], "num_periods":5}
+branch_dat = fromJSON(httr::content(req, as = "text"))[[2]]
+
+liveish_data <- reactive({
+  invalidateLater(100)
+  httr::GET(...)
+})
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
