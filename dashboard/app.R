@@ -48,15 +48,19 @@ get_data <- function() {
 
 predictions_all <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(500)
+  invalidateLater(100)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream, 5)
   predictions_all <<- c(predictions_all, model_predictions)
-  print(predictions_all)
+  #print(predictions_all)
 })
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-   
+  
+  #Disable graying out while refreshing realtime plots
+  tags$style(type="text/css",
+             ".recalculating {opacity: 1.0;}"
+  ),
    # Application title
    titlePanel("Old Faithful Geyser Data"),
    
