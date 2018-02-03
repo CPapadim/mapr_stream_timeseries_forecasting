@@ -31,7 +31,7 @@ get_prediction <- function(json_features) {
                       `Content-Type` = 'application/json',
                       `Cookie` = paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL'))))
   
-  return fromJSON(httr::content(req, as = "text"))
+  return(fromJSON(httr::content(req, as = "text")))
   
 }
 
