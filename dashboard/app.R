@@ -9,7 +9,7 @@
 #install.packages('rjson')
 #install.packages('lubridate')
 #install.packages('DT')
-
+#install.packages('plotly')
 library(RCurl)
 library(stringr)
 library(lubridate)
@@ -52,7 +52,7 @@ get_data <- function() {
 liveish_data <- reactive({
   invalidateLater(100)
   stream_data = get_data()
-  
+  model_predictions = get_predictions(stream_data, 5)
 })
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -80,13 +80,13 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   output$distPlot <- renderPlot({
+   output$distPlot <- renderPlotly({
       # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2] 
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white')
+     x <- length(liveish_data())
+     y <- liveish_data()
+     data <- data.frame(x, random_y)
+     
+     p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
    })
 }
 
