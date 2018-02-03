@@ -48,7 +48,6 @@ get_data <- function() {
 
 
 
-
 liveish_data <- reactive({
   invalidateLater(500)
   data_stream = get_data()
