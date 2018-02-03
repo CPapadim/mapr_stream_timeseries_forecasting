@@ -50,7 +50,7 @@ get_data <- function() {
 
 
 liveish_data <- reactive({
-  invalidateLater(5000)
+  invalidateLater(500)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream, 5)
   print(model_predictions)
@@ -83,7 +83,7 @@ server <- function(input, output) {
    
    output$distPlot <- renderPlotly({
       # generate bins based on input$bins from ui.R
-     x <- length(liveish_data())
+     x <- c(1:length(liveish_data()))
      y <- liveish_data()
      data <- data.frame(x, y)
      
