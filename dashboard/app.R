@@ -37,7 +37,7 @@ get_prediction <- function(data_stream, num_periods) {
                       `Content-Type` = 'application/json',
                       `Cookie` = paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL'))))
   
-  return(fromJSON(httr::content(req, as = "text")))
+  return(fromJSON(httr::content(req, as = "text", encoding = 'UTF-8')))
   
 }
 
@@ -50,7 +50,7 @@ get_data <- function() {
 
 predictions_all <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(100)
+  invalidateLater(10)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream, 100)
   predictions_all <<- c(predictions_all, model_predictions)
