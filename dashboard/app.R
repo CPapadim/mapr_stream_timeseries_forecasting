@@ -21,12 +21,18 @@ require(plotly)
 
 
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
+hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
+
 json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1), 
                    num_periods = 5))
+get_prediction <- function(json_features) {
+  req <- postForm(url,
+                  .opts=list(httpheader=hdr, postfields=json_features))
+  
+}
 
-hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
-req <- postForm(url,
-         .opts=list(httpheader=hdr, postfields=json))
+
+
 
 
 
