@@ -46,13 +46,13 @@ get_data <- function() {
 
 
 
-
-
+predictions_all <- vector('numeric')
 liveish_data <- reactive({
   invalidateLater(500)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream, 5)
-  print(model_predictions)
+  predictions_all <<- c(predictions_all, model_predictions)
+  print(predictions_all)
 })
 # Define UI for application that draws a histogram
 ui <- fluidPage(
