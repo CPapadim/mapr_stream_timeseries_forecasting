@@ -41,7 +41,7 @@ get_prediction <- function(data_stream, num_periods) {
 
 
 get_data <- function() {
-  return(runif(50, 0, 5)) 
+  return(runif(100, 0, 5)) 
 }
 
 
@@ -50,9 +50,12 @@ predictions_all <- vector('numeric')
 liveish_data <- reactive({
   invalidateLater(100)
   data_stream = get_data()
-  model_predictions = get_prediction(data_stream, 5)
+  model_predictions = get_prediction(data_stream, 100)
   predictions_all <<- c(predictions_all, model_predictions)
-  #print(predictions_all)
+  if (length(predictions_all) > 500) {
+    predictions_all <<- tail(predictions_all, 500)
+  }
+  predictions_all
 })
 # Define UI for application that draws a histogram
 ui <- fluidPage(
