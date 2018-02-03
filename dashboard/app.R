@@ -21,7 +21,6 @@ require(plotly)
 
 
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
-#url = 'https://jenkins.datascience.com/job/datascienceinc/job/platform/api/json?tree=jobs[url]'
 json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1), 
                    num_periods = 5))
 
@@ -30,20 +29,6 @@ req <- postForm(url,
          .opts=list(httpheader=hdr, postfields=json))
 
 
-h <- new_handle()
-#handle_setopt(h, copypostfields = "moo=moomooo");
-handle_setform(h,
-               array = '[1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1]',
-               num_periods = '5')
-
-#,
-#'Cookie' = paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL'))
-handle_setheaders(h,
-                  'Content-Length' = '20000'
-                  'Content-Type' = "application/json",
-                  'Cookie' = paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL'))
-)
-req <- curl_fetch_memory(url, handle = h)
 
 req <- httr::POST(url,body = json,
                  #set_cookies(`datascience-cookie` = Sys.getenv('MODEL_CREDENTIAL')),
@@ -54,10 +39,6 @@ req <- httr::POST(url,body = json,
 fromJSON(httr::content(req, as = "text"))
 
 
-req <- POST("http://api.scb.se/OV0104/v1/doris/sv/ssd/START/PR/PR0101/PR0101A/KPIFastM2", 
-            body = '{ "query": [], "response": { "format": "json" } }')
-
-branch_dat = fromJSON(httr::content(req, as = "text"))[[2]]
 
 liveish_data <- reactive({
   invalidateLater(100)
