@@ -25,7 +25,11 @@ hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `
 
 json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1), 
                    num_periods = 5))
-get_prediction <- function(model_input) {
+
+get_prediction <- function(data_stream, num_periods) {
+  
+  model_input = toJSON(list(array = data_stream, 
+                            num_periods = num_periods))
   req <- httr::POST(url,body = model_input,
                     add_headers(
                       `Content-Type` = 'application/json',
@@ -36,8 +40,9 @@ get_prediction <- function(model_input) {
 }
 
 
-
-
+get_data <- function() {
+  return(runif(5, 0, 20))
+}
 
 
 
@@ -46,7 +51,8 @@ get_prediction <- function(model_input) {
 
 liveish_data <- reactive({
   invalidateLater(100)
-  httr::GET(...)
+  stream_data = get_data()
+  
 })
 # Define UI for application that draws a histogram
 ui <- fluidPage(
