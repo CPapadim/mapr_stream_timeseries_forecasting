@@ -51,6 +51,9 @@ req <- httr::POST(url,body = json,
                              `Content-Type` = 'application/json',
                              `Cookie` = paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL'))))
 
+fromJSON(httr::content(req, as = "text"))
+
+
 req <- POST("http://api.scb.se/OV0104/v1/doris/sv/ssd/START/PR/PR0101/PR0101A/KPIFastM2", 
             body = '{ "query": [], "response": { "format": "json" } }')
 
