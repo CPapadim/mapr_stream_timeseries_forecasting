@@ -41,7 +41,7 @@ get_prediction <- function(data_stream, num_periods) {
 
 
 get_data <- function() {
-  return(runif(5, 0, 20))
+  return(runif(50, 0, 5)) 
 }
 
 
@@ -50,9 +50,10 @@ get_data <- function() {
 
 
 liveish_data <- reactive({
-  invalidateLater(100)
-  stream_data = get_data()
-  model_predictions = get_predictions(stream_data, 5)
+  invalidateLater(5000)
+  data_stream = get_data()
+  model_predictions = get_prediction(data_stream, 5)
+  print(model_predictions)
 })
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -72,7 +73,7 @@ ui <- fluidPage(
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("distPlot")
+         plotlyOutput("distPlot")
       )
    )
 )
@@ -84,7 +85,7 @@ server <- function(input, output) {
       # generate bins based on input$bins from ui.R
      x <- length(liveish_data())
      y <- liveish_data()
-     data <- data.frame(x, random_y)
+     data <- data.frame(x, y)
      
      p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
    })
