@@ -10,6 +10,8 @@
 #install.packages('lubridate')
 #install.packages('DT')
 #install.packages('plotly')
+#install.packages('dygraphs')
+library(dygraphs)
 library(RCurl)
 library(stringr)
 library(lubridate)
@@ -79,7 +81,7 @@ ui <- fluidPage(
       
       # Show a plot of the generated distribution
       mainPanel(
-         plotlyOutput("distPlot")
+         dygraphOutput("distPlot")
       )
    )
 )
@@ -87,13 +89,14 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   output$distPlot <- renderPlotly({
+   output$distPlot <- renderDygraph({
       # generate bins based on input$bins from ui.R
      x <- c(1:length(liveish_data()))
      y <- liveish_data()
-     data <- data.frame(x, y)
-     
-     p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
+     #data <- data.frame(x, y)
+     data <- ts(y, x)
+     dygraph(data)
+     #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
    })
 }
 
