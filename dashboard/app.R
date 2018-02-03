@@ -25,8 +25,8 @@ hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `
 
 json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1), 
                    num_periods = 5))
-get_prediction <- function(json_features) {
-  req <- httr::POST(url,body = json,
+get_prediction <- function(model_input) {
+  req <- httr::POST(url,body = model_input,
                     add_headers(
                       `Content-Type` = 'application/json',
                       `Cookie` = paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL'))))
