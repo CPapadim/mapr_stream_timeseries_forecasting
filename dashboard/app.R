@@ -26,8 +26,8 @@ require(plotly)
 
 data_url = 's3://ds-cloud-cso/mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
 
-s3_command = paste0('aws s3 cp ', data_url, ' -') # The dash at the end creates a stream rather than downloading
-readLines(pipe("aws s3 cp s3://path/to/csv/test_file.txt -"))
+s3_command = paste0('~/.local/bin/aws s3 cp ', data_url, ' -') # The dash at the end creates a stream rather than downloading
+readLines(pipe(s3_command))
 
 
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
