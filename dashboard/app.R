@@ -36,8 +36,10 @@ hold = read.csv('my_data_range')
 
 
 data_url = 'https://ds-cloud-cso.s3.amazonaws.com/mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
+data_url = 'https://ds-cloud-cso.s3.amazonaws.com/mapr-demo/tmp.csv'
 s3_data_stream = url(data_url, blocking = FALSE, open = 'r')
-readLines(s3_data_stream, n=1)
+#s3_data_stream = url(data_url)
+scan(s3_data_stream, n=151, what= "char(0)", sep = "\n", quiet = TRUE)
 
 
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
