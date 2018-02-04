@@ -50,7 +50,7 @@ get_data <- function() {
 
 predictions_all <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(10)
+  invalidateLater(100)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream, 100)
   predictions_all <<- c(predictions_all, model_predictions)
