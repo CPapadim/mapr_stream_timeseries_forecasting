@@ -14,8 +14,8 @@
 #pip install awscli --upgrade --user
 #export PATH=~/.local/bin:$PATH
 # Set these and aws cli will know to use them:
-#   AWS_ACCESS_KEY_ID ??? AWS access key.
-#   AWS_SECRET_ACCESS_KEY
+#AWS_ACCESS_KEY_ID
+#AWS_SECRET_ACCESS_KEY
 library(dygraphs)
 library(RCurl)
 library(stringr)
@@ -26,12 +26,11 @@ require(rjson)
 require(dplyr)
 require(plotly)
 
-Sys.setenv('AWS_ACCESS_KEY_ID') = 
-Sys.setenv('AWS_SECRET_ACCESS_KEY') = 
+
 data_url = 's3://ds-cloud-cso/mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
 
 s3_command = paste0('~/.local/bin/aws s3 cp ', data_url, ' -') # The dash at the end creates a stream rather than downloading
-readLines(pipe(s3_command))
+readLines(pipe(s3_command), n)
 
 
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
