@@ -11,6 +11,9 @@
 #install.packages('DT')
 #install.packages('plotly')
 #install.packages('dygraphs')
+#pip install awscli --upgrade --user
+#export PATH=~/.local/bin:$PATH
+
 library(dygraphs)
 library(RCurl)
 library(stringr)
