@@ -43,7 +43,8 @@ s3_command = paste0('~/.local/bin/aws s3 cp ', data_url, ' -') # The dash at the
 #s3_command = paste0('~/.local/bin/aws s3api get-object --bucket ds-cloud-cso --key mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv --range bytes=0-99999 my_data_range')
 s3_data_stream = pipe(s3_command, open = 'r')
 #csv_dat = read.csv(s3_data_stream)
-readLines(s3_data_stream, n=1)
+readLines(s3_data_stream, n=1) #Skip header
+
 #scan(s3_data_stream, n=1, skip = 5, what= "char(0)", sep = "\n", quiet = TRUE)
 
 
@@ -99,11 +100,12 @@ get_data <- function() {
 
 predictions_all <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(100)
-  data_stream = get_data()
+  invalidateLater(10)
+  #data_stream = get_data()
   #model_predictions = get_prediction(data_stream, 100)
   #predictions_all <<- c(predictions_all, model_predictions)
-  predictions_all <<- c(predictions_all, model_predictions)
+  line = readLines(s3_data_stream, n=1)
+  predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 500) {
     predictions_all <<- tail(predictions_all, 500)
   }
