@@ -84,7 +84,7 @@ get_prediction <- function(data_stream, num_periods) {
   
   model_input = toJSON(list(array = data_stream, 
                             num_periods = num_periods))
-  req <- httr::POST(url,body = model_input,
+  req <- httr::POST(url,body = model_input, config(ssl_verifypeer = 0L),
                     add_headers(
                       `Content-Type` = 'application/json',
                       `Cookie` = paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL'))))
@@ -102,7 +102,7 @@ get_data <- function() {
 
 predictions_all <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(200)
+  invalidateLater(100)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream, 100)
   predictions_all <<- c(predictions_all, model_predictions)
