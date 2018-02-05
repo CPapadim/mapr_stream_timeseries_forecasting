@@ -161,8 +161,8 @@ server <- function(input, output) {
      k = 0.5
      r = 0.15
      
-     my_raw_value = perc_outlier
-     theta = my_raw_value * 180/300
+     #my_raw_value = perc_outlier
+     theta = 180#my_raw_value * 180/300
      theta = theta * pi / 180
      x = h + r*cos(theta)
      y = k + r*sin(theta)
