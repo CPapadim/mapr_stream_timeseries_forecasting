@@ -26,6 +26,7 @@ require(rjson)
 require(dplyr)
 require(plotly)
 library(httr)
+library(htmlwidgets)
 
 #s3write_using(iris, FUN = write.csv,
 #              bucket = "ds-cloud-cso",
@@ -160,7 +161,6 @@ server <- function(input, output) {
      h = 0.24
      k = 0.5
      r = 0.15
-     
      # theta = 0 -> 100%, theta = 180 -> 0%
      # Convert from perc to degrees:  180-(perc_outlier/(100/180))
      theta = 180-(perc_outlier/(100/180))
@@ -181,7 +181,8 @@ server <- function(input, output) {
        domain = list(x = c(0, 0.48), y = c(0, 1)),
        marker = list(colors = c('rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)')),
        showlegend = FALSE
-     )
+     ) %>% config(displayModeBar = FALSE)
+
      base_plot <- add_trace(
        base_plot,
        type = "pie",
