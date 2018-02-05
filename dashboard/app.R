@@ -115,6 +115,8 @@ liveish_data <- reactive({
   }
   predictions_all
 })
+
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
@@ -125,14 +127,16 @@ ui <- fluidPage(
   ),
    # Application title
    titlePanel("SCARA Robot Status"),
-   
-    # Show a plot of the generated distribution
-    mainPanel(
-       dygraphOutput("distPlot"),
+   fluidRow(
+    column(width = 8,
+       dygraphOutput("distPlot")
+    ),
+    column(width = 4,
        h3(textOutput("status_text")),
        gaugeOutput("gauge")
     )
-   
+    
+   )
 )
 
 # Define server logic required to draw a histogram
@@ -168,8 +172,8 @@ server <- function(input, output) {
      if (perc_outlier <= 25) {
        health_label = 'Healthy'
      } else if (perc_outlier <= 50) {
-       health_label = 'Warning'
-     } else {health_label = 'Failure!'}
+       health_label = 'Warning!'
+     } else {health_label = 'Failure!!'}
      health_label
      
    })
