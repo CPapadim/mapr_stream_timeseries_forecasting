@@ -161,8 +161,9 @@ server <- function(input, output) {
      k = 0.5
      r = 0.15
      
-     #my_raw_value = perc_outlier
-     theta = 180#my_raw_value * 180/300
+     # theta = 0 -> 100%, theta = 180 -> 0%
+     # Convert from perc to degrees:  180-(perc_outlier/(100/180))
+     theta = 180-(perc_outlier/(100/180))
      theta = theta * pi / 180
      x = h + r*cos(theta)
      y = k + r*sin(theta)
