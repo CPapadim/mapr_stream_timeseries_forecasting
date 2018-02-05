@@ -166,14 +166,13 @@ server <- function(input, output) {
         health_label = 'Warning'
      } else {health_label = 'Failure!'}
      print(health_label)
-     gauge(perc_outlier, 
+     gauge(perc_outlier, label = health_label,
            min = 0, 
            max = 100, 
            sectors = gaugeSectors(success = c(0, 25), 
                                   warning = c(25, 50),
                                   danger = c(50, 100)),
-          label = health_label,
-          symbol = '%'
+           symbol = '%'
      )
    })
    
