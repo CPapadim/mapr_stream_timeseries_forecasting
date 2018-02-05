@@ -156,11 +156,12 @@ server <- function(input, output) {
    
    output$meterPlot <- renderPlotly({
      
+     perc_outlier <- 100*(sum(liveish_data() > 6) / 500)
      h = 0.24
      k = 0.5
      r = 0.15
      
-     my_raw_value = 100
+     my_raw_value = perc_outlier
      theta = my_raw_value * 180/300
      theta = theta * pi / 180
      x = h + r*cos(theta)
