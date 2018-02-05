@@ -160,17 +160,18 @@ server <- function(input, output) {
    output$gauge = renderGauge({
      x <- liveish_data()
      perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
-     if (perc_outlier <= 0.25) {
+     if (perc_outlier <= 25) {
         health_label = 'Healthy'
-     } else if (perc_outlier <= 0.5) {
+     } else if (perc_outlier <= 50) {
         health_label = 'Warning'
      } else {health_label = 'Failure!'}
+     print(health_label)
      gauge(perc_outlier, 
            min = 0, 
            max = 100, 
-           sectors = gaugeSectors(success = c(0, 0.25), 
-                                  warning = c(0.25, 0.5),
-                                  danger = c(0.5, 1)),
+           sectors = gaugeSectors(success = c(0, 25), 
+                                  warning = c(25, 50),
+                                  danger = c(50, 100)),
           label = health_label,
           symbol = '%'
      )
