@@ -11,6 +11,7 @@
 #install.packages('DT')
 #install.packages('plotly')
 #install.packages('dygraphs')
+#install.packages('flexdashboard')
 #pip install awscli --upgrade --user
 #export PATH=~/.local/bin:$PATH
 # Set these and aws cli will know to use them:
@@ -26,7 +27,7 @@ require(rjson)
 require(dplyr)
 require(plotly)
 library(httr)
-library(htmlwidgets)
+library(flexdashboard)
 
 #s3write_using(iris, FUN = write.csv,
 #              bucket = "ds-cloud-cso",
@@ -137,7 +138,8 @@ ui <- fluidPage(
       # Show a plot of the generated distribution
       mainPanel(
          dygraphOutput("distPlot"),
-         plotlyOutput("meterPlot")
+         gaugeOutput("gauge")
+         #plotlyOutput("meterPlot")
       )
    )
 )
@@ -155,81 +157,99 @@ server <- function(input, output) {
      #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
    })
    
-   output$meterPlot <- renderPlotly({
-     
-     perc_outlier <- 100*(sum(liveish_data() > 5) / 500)
-     h = 0.24
-     k = 0.5
-     r = 0.15
-     # theta = 0 -> 100%, theta = 180 -> 0%
-     # Convert from perc to degrees:  180-(perc_outlier/(100/180))
-     theta = 180-(perc_outlier/(100/180))
-     theta = theta * pi / 180
-     x = h + r*cos(theta)
-     y = k + r*sin(theta)
-     path = paste('M 0.235 0.5 L' , x, y, 'L 0.245 0.5 Z')
-     base_plot <- plot_ly(
-       type = "pie",
-       values = c(40, 10, 10, 10, 10, 10, 10),
-       labels = c("-", "0", "20", "40", "60", "80", "100"),
-       rotation = 108,
-       direction = "clockwise",
-       hole = 0.4,
-       textinfo = "label",
-       textposition = "outside",
-       hoverinfo = "none",
-       domain = list(x = c(0, 0.48), y = c(0, 1)),
-       marker = list(colors = c('rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)')),
-       showlegend = FALSE
-     ) %>% config(displayModeBar = FALSE)
-
-     base_plot <- add_trace(
-       base_plot,
-       type = "pie",
-       values = c(50, 10, 10, 10, 10, 10),
-       labels = c("Error Log Level Meter", "Debug", "Info", "Warn", "Error", "Fatal"),
-       rotation = 90,
-       direction = "clockwise",
-       hole = 0.3,
-       textinfo = "label",
-       textposition = "inside",
-       hoverinfo = "none",
-       domain = list(x = c(0, 0.48), y = c(0, 1)),
-       marker = list(colors = c('rgb(255, 255, 255)', 'rgb(232,226,202)', 'rgb(226,210,172)', 'rgb(223,189,139)', 'rgb(223,162,103)', 'rgb(226,126,64)')),
-       showlegend= FALSE
+   output$gauge = renderGauge({
+     x <- liveish_data()
+     perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
+     if (perc_outlier <= 0.25) {
+        health_label = 'Healthy'
+     } else if (perc_outlier <= 0.5) {
+        health_label = 'Warning'
+     } else {health_label = 'Failure!'}
+     gauge(perc_outlier, 
+           min = 0, 
+           max = 100, 
+           sectors = gaugeSectors(success = c(0, 0.25), 
+                                  warning = c(0.25, 0.5),
+                                  danger = c(0.5, 1)),
+          label = health_label,
+          symbol = '%'
      )
-     a <- list(
-       showticklabels = FALSE,
-       autotick = FALSE,
-       showgrid = FALSE,
-       zeroline = FALSE)
-     
-     b <- list(
-       xref = 'paper',
-       yref = 'paper',
-       x = 0.23,
-       y = 0.45,
-       showarrow = FALSE,
-       text = '50')
-     
-     base_chart <- layout(
-       base_plot,
-       shapes = list(
-         list(
-           type = 'path',
-           path = path,
-           xref = 'paper',
-           yref = 'paper',
-           fillcolor = 'rgba(44, 160, 101, 0.5)'
-         )
-       ),
-       xaxis = a,
-       yaxis = a,
-       annotations = b
-     )
-     
-     
    })
+   
+   # output$meterPlot <- renderPlotly({
+   #   
+   #   perc_outlier <- 100*(sum(liveish_data() > 5) / 500)
+   #   h = 0.24
+   #   k = 0.5
+   #   r = 0.15
+   #   # theta = 0 -> 100%, theta = 180 -> 0%
+   #   # Convert from perc to degrees:  180-(perc_outlier/(100/180))
+   #   theta = 180-(perc_outlier/(100/180))
+   #   theta = theta * pi / 180
+   #   x = h + r*cos(theta)
+   #   y = k + r*sin(theta)
+   #   path = paste('M 0.235 0.5 L' , x, y, 'L 0.245 0.5 Z')
+   #   base_plot <- plot_ly(
+   #     type = "pie",
+   #     values = c(40, 10, 10, 10, 10, 10, 10),
+   #     labels = c("-", "0", "20", "40", "60", "80", "100"),
+   #     rotation = 108,
+   #     direction = "clockwise",
+   #     hole = 0.4,
+   #     textinfo = "label",
+   #     textposition = "outside",
+   #     hoverinfo = "none",
+   #     domain = list(x = c(0, 0.48), y = c(0, 1)),
+   #     marker = list(colors = c('rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)', 'rgb(255, 255, 255)')),
+   #     showlegend = FALSE
+   #   )
+   # 
+   #   base_plot <- add_trace(
+   #     base_plot,
+   #     type = "pie",
+   #     values = c(50, 10, 10, 10, 10, 10),
+   #     labels = c("Error Log Level Meter", "Debug", "Info", "Warn", "Error", "Fatal"),
+   #     rotation = 90,
+   #     direction = "clockwise",
+   #     hole = 0.3,
+   #     textinfo = "label",
+   #     textposition = "inside",
+   #     hoverinfo = "none",
+   #     domain = list(x = c(0, 0.48), y = c(0, 1)),
+   #     marker = list(colors = c('rgb(255, 255, 255)', 'rgb(232,226,202)', 'rgb(226,210,172)', 'rgb(223,189,139)', 'rgb(223,162,103)', 'rgb(226,126,64)')),
+   #     showlegend= FALSE
+   #   )
+   #   a <- list(
+   #     showticklabels = FALSE,
+   #     autotick = FALSE,
+   #     showgrid = FALSE,
+   #     zeroline = FALSE)
+   #   
+   #   b <- list(
+   #     xref = 'paper',
+   #     yref = 'paper',
+   #     x = 0.23,
+   #     y = 0.45,
+   #     showarrow = FALSE,
+   #     text = '50')
+   #   
+   #   base_chart <- layout(
+   #     base_plot,
+   #     shapes = list(
+   #       list(
+   #         type = 'path',
+   #         path = path,
+   #         xref = 'paper',
+   #         yref = 'paper',
+   #         fillcolor = 'rgba(44, 160, 101, 0.5)'
+   #       )
+   #     ),
+   #     xaxis = a,
+   #     yaxis = a,
+   #     annotations = b
+   #   )# %>% config(displayModeBar = FALSE)
+   #   
+   # })
 }
 
 # Run the application 
