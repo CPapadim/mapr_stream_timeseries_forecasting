@@ -156,7 +156,7 @@ server <- function(input, output) {
    
    output$meterPlot <- renderPlotly({
      
-     perc_outlier <- 100*(sum(liveish_data() > 6) / 500)
+     perc_outlier <- 100*(sum(liveish_data() > 5) / 500)
      h = 0.24
      k = 0.5
      r = 0.15
