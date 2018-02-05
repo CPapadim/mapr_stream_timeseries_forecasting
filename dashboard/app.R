@@ -105,11 +105,11 @@ get_data <- function() {
 predictions_all <- vector('numeric')
 liveish_data <- reactive({
   invalidateLater(100)
-  data_stream = get_data()
-  model_predictions = get_prediction(data_stream, 100)
-  predictions_all <<- c(predictions_all, model_predictions)
-  #line = readLines(s3_data_stream, n=1)
-  #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
+  #data_stream = get_data()
+  #model_predictions = get_prediction(data_stream, 100)
+  #predictions_all <<- c(predictions_all, model_predictions)
+  line = readLines(s3_data_stream, n=1)
+  predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 500) {
     predictions_all <<- tail(predictions_all, 500)
   }
