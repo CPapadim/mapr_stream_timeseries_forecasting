@@ -29,13 +29,6 @@ require(plotly)
 library(httr)
 library(flexdashboard)
 
-#s3write_using(iris, FUN = write.csv,
-#              bucket = "ds-cloud-cso",
-#              object = "mapr-demo/tmp.csv")
-
-#s3write_using(iris_hold, FUN = write.csv,
-#              bucket = "ds-cloud-cso",
-#              object = "mapr-demo/tmp.csv")
 
 
 #scan(con,n,what="char(0)",sep="\n",quiet=TRUE,...)
@@ -75,17 +68,15 @@ readLines(s3_data_stream, n=1) #Skip header
 #scan(s3_data_stream, n=151, what= "char(0)", sep = "\n", quiet = TRUE)
 
 
-#url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v1/'
-url = 'https://mapr-demo.datascience.com/deploy/deploy-scara-robot-anomaly-detector-24864-v1/'
+url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v3/'
+#url = 'https://mapr-demo.datascience.com/deploy/deploy-scara-robot-anomaly-detector-24864-v3/'
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL_2')), `Content-Type`="application/json")
 
-json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1), 
-                   num_periods = 5))
+#json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1)))
 
-get_prediction <- function(data_stream, num_periods) {
+get_prediction <- function(data_stream) {
   
-  model_input = toJSON(list(array = data_stream, 
-                            num_periods = num_periods))
+  model_input = toJSON(list(array = data_stream))
   req <- httr::POST(url,body = model_input, config(ssl_verifypeer = 0L),
                     add_headers(
                       `Content-Type` = 'application/json',
@@ -105,11 +96,11 @@ get_data <- function() {
 predictions_all <- vector('numeric')
 liveish_data <- reactive({
   invalidateLater(100)
-  #data_stream = get_data()
-  #model_predictions = get_prediction(data_stream, 100)
-  #predictions_all <<- c(predictions_all, model_predictions)
-  line = readLines(s3_data_stream, n=1)
-  predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
+  data_stream = get_data()
+  model_predictions = get_prediction(data_stream)
+  predictions_all <<- c(predictions_all, model_predictions)
+  #line = readLines(s3_data_stream, n=1)
+  #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 500) {
     predictions_all <<- tail(predictions_all, 500)
   }
