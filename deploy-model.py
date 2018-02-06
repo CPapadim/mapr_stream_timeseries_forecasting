@@ -1,3 +1,18 @@
+import os
+import pandas as pd
+import csv
+import numpy as np
+import random
+import random
+
+import tensorflow as tf
+import shutil
+import tensorflow.contrib.learn as tflearn
+import tensorflow.contrib.layers as tflayers
+from tensorflow.contrib.learn.python.learn import learn_runner
+import tensorflow.contrib.metrics as metrics
+import tensorflow.contrib.rnn as rnn
+
 tf.reset_default_graph()   #We didn't have any previous graph objects running, but this would reset the graphs
 
 num_periods = 100
