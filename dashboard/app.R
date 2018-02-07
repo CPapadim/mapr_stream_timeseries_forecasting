@@ -121,6 +121,8 @@ ui <- fluidPage(
    fluidRow(
     column(width = 8,
        dygraphOutput("distPlot")
+       #plotlyOutput("distPlot")
+       
     ),
     column(width = 4,
        h3(textOutput("status_text")),
@@ -133,14 +135,19 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
+   #output$distPlot <- renderPlotly({
    output$distPlot <- renderDygraph({
+       
       # generate bins based on input$bins from ui.R
      x <- c(1:length(liveish_data()))
      y <- liveish_data()
+     
      #data <- data.frame(x, y)
-     data <- ts(y, x)
-     dygraph(data)
      #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
+     
+     data <- ts(y, x)
+     dygraph(data)  %>%
+       dyOptions(drawPoints = TRUE, pointSize = 2, strokeWidth = 0.0)
    })
    
    output$gauge = renderGauge({
