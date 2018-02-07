@@ -97,7 +97,7 @@ predictions_all <- vector('numeric')
 actual_all <- vector('numeric')
 ap_diff <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(100)
+  invalidateLater(200)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
@@ -159,7 +159,7 @@ server <- function(input, output) {
      dygraph(data)  %>% 
        dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
-       dySeries('diff')
+       dySeries('diff', axis = 'y2')
      })
    
    #output$diffPlot <- renderDygraph({
