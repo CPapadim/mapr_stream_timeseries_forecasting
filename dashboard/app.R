@@ -94,17 +94,21 @@ get_data <- function() {
 
 
 predictions_all <- vector('numeric')
+actual_all <- vector('numeric')
 liveish_data <- reactive({
   invalidateLater(100)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
+  actual_all <<- c(actual_all, model_predictions)
   #line = readLines(s3_data_stream, n=1)
   #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 500) {
     predictions_all <<- tail(predictions_all, 500)
+    actual_all <<- tail(actual_all, 500)
+    
   }
-  predictions_all
+  list(predictions_all, actual_all)
 })
 
 
@@ -139,19 +143,21 @@ server <- function(input, output) {
    output$distPlot <- renderDygraph({
        
       # generate bins based on input$bins from ui.R
-     x <- c(1:length(liveish_data()))
-     y <- liveish_data()
-     
+     x <- c(1:length(liveish_data()[[1]]))
+     y <- liveish_data()[[1]]
+     z <- liveish_data()[[2]]
      #data <- data.frame(x, y)
      #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
      
-     data <- ts(y, x)
-     dygraph(data)  %>%
-       dyOptions(drawPoints = TRUE, pointSize = 2, strokeWidth = 0.0)
-   })
+     data <- cbind(ts(y, x), ts(y,z))
+     colnames(data) = c('pred', 'act')
+     dygraph(data)  %>% 
+       dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
+       dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0)
+     })
    
    output$gauge = renderGauge({
-     x <- liveish_data()
+     x <- liveish_data()[[1]]
      perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
      gauge(perc_outlier,
            min = 0, 
@@ -164,7 +170,7 @@ server <- function(input, output) {
    })
    
    output$status_text = renderText({
-     x <- liveish_data()
+     x <- liveish_data()[[1]]
      perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
      
      if (perc_outlier <= 25) {
