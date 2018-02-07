@@ -167,7 +167,7 @@ server <- function(input, output) {
      dy_plot = dygraph(data)  %>%
        dyOptions(drawGrid = FALSE) %>%
        dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', ticker = "function(){ return  [{v: 1, label: 'hi'}, {v: 2, label: 'hi2'}]; }" )
+       dyAxis('y', ticker = "function(){ return  [{v: 0, label: '0'}, {v: 1, label: '1'}, {v: 5, label: 'Anomaly Threshold'}]; }" )
        #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
        #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
