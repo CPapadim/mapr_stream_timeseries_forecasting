@@ -177,24 +177,14 @@ server <- function(input, output) {
        dyLimit(-4, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
        dyLimit(4, color = rgb(0.85, 0.4, 0.4)) %>%
        dyLimit(0, color = rgb(0.85, 0.85, 0.85))
-       #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
-       #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
-       #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
-       #dyAxis("y2", valueRange = c(-1, 10)) %>%
-       #dySeries('diff', axis = 'y2')
 
      })
    
-   #output$diffPlot <- renderDygraph({
-     
-     # generate bins based on input$bins from ui.R
-  #   x <- c(1:length(liveish_data()[[1]]))
-
-   #  data <- ts(diff, x)
-  #   dygraph(data)
-  # })
    
-      
+  output$maintenance = renderPlotly({
+    x <- c(1,2, 5, 8, 11, 12, 14, 15)
+    y <- c(3, 1, 2, 1, 2, 4, 1, 2)
+  })
    output$gauge = renderGauge({
      x <- liveish_data()[[1]]
      perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
