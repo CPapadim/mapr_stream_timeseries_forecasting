@@ -129,14 +129,15 @@ ui <- fluidPage(
              "#status_text {text-align:center;}",
              "#actpredPlot {height:300px !important;}",
              ".stream_switch div {display:inline;}",
-             ".stream_switch p {display:inline;}"
+             ".stream_switch p {display:inline; padding-right:10px; font-weight:bold;}",
+             ".stream_switch h1 {display:inline; padding-right: 100px}"
   ),
    # Application title
-   titlePanel("SCARA Robot Status"),
   tags$div(class = 'stream_switch',
-    p('From Stream'),
-    materialSwitch(inputId = "id", label = "Live / Historical", status = "primary", right = TRUE),
-    p('From Storage')
+    h1("SCARA Robot Status"),
+    p('From Storage'),
+    materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE),
+    p('From Stream')
   ),
    br(),
    fluidRow(
