@@ -144,28 +144,42 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
+  
+  vis <- reactive({
+    x <- c(1:length(liveish_data()[[1]]))
+    y <- liveish_data()[[1]]
+    data <- data.frame(x, y)
+    colnames(data) = c('x', 'y')
+    women %>%
+      ggvis(x= ~height, y = ~weight) %>%
+      layer_points()#%>%
+      #bind_shiny("p")
+    #ggvis(data, props(x = ~x, y = ~y)) + mark_point()
+  })
+  vis %>% bind_shiny("actpredPlot")
+  
    #output$actpredPlot <- renderPlotly({
-   output$actpredPlot <- renderDygraph({
-       
-      # generate bins based on input$bins from ui.R
-     x <- c(1:length(liveish_data()[[1]]))
-     y <- liveish_data()[[1]]
-     z <- liveish_data()[[2]]
-     diff = liveish_data()[[3]]
-     
-     #data <- data.frame(x, y)
-     #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
-     data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
-     colnames(data) = c('pred', 'act', 'diff')
-   
-     dy_plot = dygraph(data)  %>% 
-       dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
-       dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
-       dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
-       dyAxis("y2", valueRange = c(-1, 10)) %>%
-       dySeries('diff', axis = 'y2')
-
-     })
+   # output$actpredPlot <- renderDygraph({
+   #     
+   #    # generate bins based on input$bins from ui.R
+   #   x <- c(1:length(liveish_data()[[1]]))
+   #   y <- liveish_data()[[1]]
+   #   z <- liveish_data()[[2]]
+   #   diff = liveish_data()[[3]]
+   #   
+   #   #data <- data.frame(x, y)
+   #   #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
+   #   data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
+   #   colnames(data) = c('pred', 'act', 'diff')
+   # 
+   #   dy_plot = dygraph(data)  %>% 
+   #     dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
+   #     dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
+   #     dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
+   #     dyAxis("y2", valueRange = c(-1, 10)) %>%
+   #     dySeries('diff', axis = 'y2')
+   # 
+   #   })
    
    #output$diffPlot <- renderDygraph({
      
