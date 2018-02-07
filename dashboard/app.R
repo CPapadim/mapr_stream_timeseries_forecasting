@@ -123,7 +123,8 @@ ui <- fluidPage(
   #Disable graying out while refreshing realtime plots
   tags$style(type="text/css",
              ".recalculating {opacity: 1.0;}",
-             "#status_text {text-align:center;}"
+             "#status_text {text-align:center;}",
+             "#actpredPlot {height:300px !important;}"
   ),
    # Application title
    titlePanel("SCARA Robot Status"),
@@ -166,7 +167,7 @@ server <- function(input, output) {
      #colnames(data) = c('diff')
 
      ticker_func = "function(){ return  [{v: 0, label: '0'}, {v: 2, label: '2'}, {v: -2, label: '-2'}]; }"
-     dy_plot = dygraph(data, height = 300)  %>%
+     dy_plot = dygraph(data)  %>%
        dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
                  rightGap = 20, strokeWidth = 2) %>%
        dyAxis('x', drawGrid = FALSE) %>%
@@ -174,7 +175,8 @@ server <- function(input, output) {
               axisLineColor = rgb(0.7,0.7,0.7),
               ticker = ticker_func) %>%
        dyLimit(-4, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
-       dyLimit(4, color = rgb(0.85, 0.4, 0.4))
+       dyLimit(4, color = rgb(0.85, 0.4, 0.4)) %>%
+       dyLimit(0, color = 'gray')
        #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
        #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
