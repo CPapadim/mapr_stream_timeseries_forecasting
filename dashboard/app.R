@@ -161,10 +161,13 @@ server <- function(input, output) {
      #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
      #data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
      #colnames(data) = c('pred', 'act', 'diff')
-     data <- ts(y, diff)
+     data <- ts(diff, x)
      #colnames(data) = c('diff')
 
-     dy_plot = dygraph(data)#  %>%
+     dy_plot = dygraph(data)  %>%
+       dyOptions(drawGrid = FALSE) %>%
+       dyAxis('x', drawGrid = FALSE) %>%
+       dyAxis('y', ticker = "function(){ return  [{v: 1, label: 'hi'}, {v: 2, label: 'hi2'}]; }" )
        #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
        #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
