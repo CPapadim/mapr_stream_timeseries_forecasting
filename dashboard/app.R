@@ -141,7 +141,12 @@ ui <- fluidPage(
        gaugeOutput("gauge")
     )
     
-   )
+   ),
+  fluidRow(
+    br(),
+    br(),
+    plotlyOutput("maintenance")
+  )
 )
 
 # Define server logic required to draw a histogram
@@ -182,8 +187,12 @@ server <- function(input, output) {
    
    
   output$maintenance = renderPlotly({
-    x <- c(1,2, 5, 8, 11, 12, 14, 15)
-    y <- c(3, 1, 2, 1, 2, 4, 1, 2)
+    x <- c(1,2, 5, 8, 11, 12, 14, 15, 16, 17, 20, 22)
+    y <- c(3, 1, 2, 1, 2, 4, 1, 2, 3, 1, 4, 1)
+    p <- plot_ly(x = x, y = y, type = 'bar', height = 300) %>% 
+      layout(title = 'Scheduled for Maintenance', 
+             yaxis = list(autotick = F, range = c(0, 4), dtick = 2, title = "# Robots"),
+             xaxis = list(showticklabels = FALSE))
   })
    output$gauge = renderGauge({
      x <- liveish_data()[[1]]
