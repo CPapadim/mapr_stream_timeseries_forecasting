@@ -100,7 +100,7 @@ liveish_data <- reactive({
   data_stream = get_data()
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
-  actual_all <<- c(actual_all, model_predictions)
+  actual_all <<- c(actual_all, mean(data_stream))
   #line = readLines(s3_data_stream, n=1)
   #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 500) {
@@ -149,7 +149,7 @@ server <- function(input, output) {
      #data <- data.frame(x, y)
      #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
      
-     data <- cbind(ts(y, x), ts(y,z))
+     data <- cbind(ts(y, x), ts(z,x))
      colnames(data) = c('pred', 'act')
      dygraph(data)  %>% 
        dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
