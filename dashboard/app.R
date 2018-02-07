@@ -129,8 +129,7 @@ ui <- fluidPage(
    titlePanel("SCARA Robot Status"),
    fluidRow(
     column(width = 8,
-        ggvisOutput("actpredPlot")
-       #dygraphOutput("actpredPlot")#,
+       dygraphOutput("actpredPlot")#,
        #dygraphOutput("diffPlot")
        #plotlyOutput("distPlot")
        
@@ -147,49 +146,32 @@ ui <- fluidPage(
 server <- function(input, output) {
    
   
-  vis <- reactive({
-    x <- c(1:length(liveish_data()[[1]]))
-    y <- liveish_data()[[1]]
-    z <- liveish_data()[[2]]
-    diff <- liveish_data()[[3]]
-    data <- data.frame(x = x,
-                       y = y,
-                       z = z, 
-                       diff = diff)
-    data <- gather(data, 'var', 'val', -x)
-    data %>% ggvis(x = ~x, y = ~val) %>% 
-      layer_points() %>%
-      group_by(var) %>% layer_paths()
-    #data %>%
-    #  ggvis(x= ~x, y = ~y) %>% #ggvis(x = ~x, y = ~z) %>%
-    #  layer_points()#%>%
-      #bind_shiny("p")
-    #ggvis(data, props(x = ~x, y = ~y)) + mark_point()
-  })
-  vis %>% bind_shiny("actpredPlot")
+  
   
    #output$actpredPlot <- renderPlotly({
-   # output$actpredPlot <- renderDygraph({
-   #     
-   #    # generate bins based on input$bins from ui.R
-   #   x <- c(1:length(liveish_data()[[1]]))
-   #   y <- liveish_data()[[1]]
-   #   z <- liveish_data()[[2]]
-   #   diff = liveish_data()[[3]]
-   #   
-   #   #data <- data.frame(x, y)
-   #   #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
-   #   data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
-   #   colnames(data) = c('pred', 'act', 'diff')
-   # 
-   #   dy_plot = dygraph(data)  %>% 
-   #     dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
-   #     dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
-   #     dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
-   #     dyAxis("y2", valueRange = c(-1, 10)) %>%
-   #     dySeries('diff', axis = 'y2')
-   # 
-   #   })
+   output$actpredPlot <- renderDygraph({
+
+      # generate bins based on input$bins from ui.R
+     x <- c(1:length(liveish_data()[[1]]))
+     #y <- liveish_data()[[1]]
+     #z <- liveish_data()[[2]]
+     diff = liveish_data()[[3]]
+
+     #data <- data.frame(x, y)
+     #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
+     #data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
+     #colnames(data) = c('pred', 'act', 'diff')
+     data <- ts(y, diff)
+     #colnames(data) = c('diff')
+
+     dy_plot = dygraph(data)#  %>%
+       #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
+       #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
+       #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
+       #dyAxis("y2", valueRange = c(-1, 10)) %>%
+       #dySeries('diff', axis = 'y2')
+
+     })
    
    #output$diffPlot <- renderDygraph({
      
