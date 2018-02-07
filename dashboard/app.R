@@ -95,18 +95,20 @@ get_data <- function() {
 
 predictions_all <- vector('numeric')
 actual_all <- vector('numeric')
+ap_diff <- vector('numeric')
 liveish_data <- reactive({
   invalidateLater(100)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, mean(data_stream))
+  ap_diff <<- c(ap_diff, abs(model_predictions - mean(data_stream)))
   #line = readLines(s3_data_stream, n=1)
   #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 500) {
     predictions_all <<- tail(predictions_all, 500)
     actual_all <<- tail(actual_all, 500)
-    
+    ap_diff <<- tail(ap_diff, 500)
   }
   list(predictions_all, actual_all)
 })
@@ -124,7 +126,8 @@ ui <- fluidPage(
    titlePanel("SCARA Robot Status"),
    fluidRow(
     column(width = 8,
-       dygraphOutput("distPlot")
+       dygraphOutput("actpredPlot")#,
+       #dygraphOutput("diffPlot")
        #plotlyOutput("distPlot")
        
     ),
@@ -139,8 +142,8 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   #output$distPlot <- renderPlotly({
-   output$distPlot <- renderDygraph({
+   #output$actpredPlot <- renderPlotly({
+   output$actpredPlot <- renderDygraph({
        
       # generate bins based on input$bins from ui.R
      x <- c(1:length(liveish_data()[[1]]))
@@ -156,6 +159,17 @@ server <- function(input, output) {
        dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0)
      })
    
+   output$diffPlot <- renderDygraph({
+     
+     # generate bins based on input$bins from ui.R
+     x <- c(1:length(liveish_data()[[1]]))
+     diff = liveish_data[[3]]
+
+     data <- ts(diff, x)
+     dygraph(data)
+   })
+   
+      
    output$gauge = renderGauge({
      x <- liveish_data()[[1]]
      perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
