@@ -30,6 +30,7 @@ require(plotly)
 library(httr)
 library(flexdashboard)
 library(ggvis)
+library(tidyr)
 
 
 
@@ -128,7 +129,8 @@ ui <- fluidPage(
    titlePanel("SCARA Robot Status"),
    fluidRow(
     column(width = 8,
-       dygraphOutput("actpredPlot")#,
+        ggvisOutput("actpredPlot")
+       #dygraphOutput("actpredPlot")#,
        #dygraphOutput("diffPlot")
        #plotlyOutput("distPlot")
        
@@ -148,11 +150,19 @@ server <- function(input, output) {
   vis <- reactive({
     x <- c(1:length(liveish_data()[[1]]))
     y <- liveish_data()[[1]]
-    data <- data.frame(x, y)
-    colnames(data) = c('x', 'y')
-    women %>%
-      ggvis(x= ~height, y = ~weight) %>%
-      layer_points()#%>%
+    z <- liveish_data()[[2]]
+    diff <- liveish_data()[[3]]
+    data <- data.frame(x = x,
+                       y = y,
+                       z = z, 
+                       diff = diff)
+    data <- gather(data, 'var', 'val', -x)
+    data %>% ggvis(x = ~x, y = ~val) %>% 
+      layer_points() %>%
+      group_by(var)
+    #data %>%
+    #  ggvis(x= ~x, y = ~y) %>% #ggvis(x = ~x, y = ~z) %>%
+    #  layer_points()#%>%
       #bind_shiny("p")
     #ggvis(data, props(x = ~x, y = ~y)) + mark_point()
   })
