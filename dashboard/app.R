@@ -107,12 +107,12 @@ liveish_data <- reactive({
   ap_diff <<- c(ap_diff, abs(model_predictions - mean(data_stream)))
   #line = readLines(s3_data_stream, n=1)
   #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
-  if (length(predictions_all) > 500) {
-    predictions_all <<- tail(predictions_all, 500)
-    actual_all <<- tail(actual_all, 500)
-    ap_diff <<- tail(ap_diff, 500)
+  if (length(predictions_all) > 200) {
+    predictions_all <<- tail(predictions_all, 200)
+    actual_all <<- tail(actual_all, 200)
+    ap_diff <<- tail(ap_diff, 200)
   }
-  invalidateLater(150)
+  invalidateLater(100)
   list(predictions_all, actual_all, ap_diff)
 })
 
@@ -159,7 +159,7 @@ server <- function(input, output) {
     data <- gather(data, 'var', 'val', -x)
     data %>% ggvis(x = ~x, y = ~val) %>% 
       layer_points() %>%
-      group_by(var)
+      group_by(var) %>% layer_paths()
     #data %>%
     #  ggvis(x= ~x, y = ~y) %>% #ggvis(x = ~x, y = ~z) %>%
     #  layer_points()#%>%
