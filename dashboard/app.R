@@ -97,7 +97,7 @@ predictions_all <- vector('numeric')
 actual_all <- vector('numeric')
 ap_diff <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(200)
+  invalidateLater(100)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
@@ -157,8 +157,10 @@ server <- function(input, output) {
      data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
      colnames(data) = c('pred', 'act', 'diff')
      dygraph(data)  %>% 
+       dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
        dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
+       dyAxis("y2", valueRange = c(-1, 10)) %>%
        dySeries('diff', axis = 'y2')
      })
    
