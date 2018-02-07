@@ -110,7 +110,7 @@ liveish_data <- reactive({
     actual_all <<- tail(actual_all, 500)
     ap_diff <<- tail(ap_diff, 500)
   }
-  list(predictions_all, actual_all)
+  list(predictions_all, actual_all, ap_diff)
 })
 
 
@@ -126,8 +126,8 @@ ui <- fluidPage(
    titlePanel("SCARA Robot Status"),
    fluidRow(
     column(width = 8,
-       dygraphOutput("actpredPlot")#,
-       #dygraphOutput("diffPlot")
+       dygraphOutput("actpredPlot"),
+       dygraphOutput("diffPlot")
        #plotlyOutput("distPlot")
        
     ),
@@ -163,7 +163,7 @@ server <- function(input, output) {
      
      # generate bins based on input$bins from ui.R
      x <- c(1:length(liveish_data()[[1]]))
-     diff = liveish_data[[3]]
+     diff = liveish_data()[[3]]
 
      data <- ts(diff, x)
      dygraph(data)
