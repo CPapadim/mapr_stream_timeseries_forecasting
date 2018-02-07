@@ -176,7 +176,7 @@ server <- function(input, output) {
               ticker = ticker_func) %>%
        dyLimit(-4, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
        dyLimit(4, color = rgb(0.85, 0.4, 0.4)) %>%
-       dyLimit(0, color = 'gray')
+       dyLimit(0, color = rgb(0.85, 0.85, 0.85))
        #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
        #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
