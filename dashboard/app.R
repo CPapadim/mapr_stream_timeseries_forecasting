@@ -164,12 +164,13 @@ server <- function(input, output) {
      data <- ts(diff, x)
      #colnames(data) = c('diff')
 
+     ticker_func = "function(){ return  [{v: 0, label: '0'}, {v: 2, label: '2'}, {v: 4, label: 'Anomaly Threshold'}, {v: -2, label: '-2'}, {v: -4, label: 'Anomaly Threshold'}]; }"
      dy_plot = dygraph(data)  %>%
        dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE) %>%
        dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', valueRange = c(0, 6), axisLineWidth = 5.0, 
+       dyAxis('y', valueRange = c(-6, 6), axisLineWidth = 5.0, 
               axisLineColor = rgb(0.7,0.7,0.7),
-              ticker = "function(){ return  [{v: 0, label: '0'}, {v: 1, label: '1'}, {v: 5, label: 'Anomaly Threshold'}]; }" )
+              ticker = ticker_func)
        #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
        #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
