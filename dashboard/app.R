@@ -12,6 +12,7 @@
 #install.packages('plotly')
 #install.packages('dygraphs')
 #install.packages('flexdashboard')
+#install.packages('ggvis')
 #pip install awscli --upgrade --user
 #export PATH=~/.local/bin:$PATH
 # Set these and aws cli will know to use them:
@@ -28,6 +29,7 @@ require(dplyr)
 require(plotly)
 library(httr)
 library(flexdashboard)
+library(ggvis)
 
 
 
