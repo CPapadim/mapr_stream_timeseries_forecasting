@@ -13,6 +13,8 @@
 #install.packages('dygraphs')
 #install.packages('flexdashboard')
 #install.packages('ggvis')
+#install.packages("shinyWidgets")
+
 #pip install awscli --upgrade --user
 #export PATH=~/.local/bin:$PATH
 # Set these and aws cli will know to use them:
