@@ -104,7 +104,7 @@ liveish_data <- reactive({
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, mean(data_stream))
-  ap_diff <<- c(ap_diff, abs(model_predictions - mean(data_stream)))
+  ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
   #line = readLines(s3_data_stream, n=1)
   #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 200) {
@@ -165,9 +165,11 @@ server <- function(input, output) {
      #colnames(data) = c('diff')
 
      dy_plot = dygraph(data)  %>%
-       dyOptions(drawGrid = FALSE) %>%
+       dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE) %>%
        dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', ticker = "function(){ return  [{v: 0, label: '0'}, {v: 1, label: '1'}, {v: 5, label: 'Anomaly Threshold'}]; }" )
+       dyAxis('y', valueRange = c(0, 6), axisLineWidth = 5.0, 
+              axisLineColor = rgb(0.7,0.7,0.7),
+              ticker = "function(){ return  [{v: 0, label: '0'}, {v: 1, label: '1'}, {v: 5, label: 'Anomaly Threshold'}]; }" )
        #dyAxis("y", label = "Time", valueRange = c(-10, 10)) %>%
        #dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
        #dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
