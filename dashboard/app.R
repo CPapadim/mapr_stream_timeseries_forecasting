@@ -142,9 +142,7 @@ ui <- fluidPage(
    br(),
    fluidRow(
     column(width = 8,
-       dygraphOutput("actpredPlot")#,
-       #dygraphOutput("diffPlot")
-       #plotlyOutput("distPlot")
+       dygraphOutput("actpredPlot")
        
     ),
     column(width = 4,
