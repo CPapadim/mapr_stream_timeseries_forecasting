@@ -126,8 +126,8 @@ ui <- fluidPage(
    titlePanel("SCARA Robot Status"),
    fluidRow(
     column(width = 8,
-       dygraphOutput("actpredPlot"),
-       dygraphOutput("diffPlot")
+       dygraphOutput("actpredPlot")#,
+       #dygraphOutput("diffPlot")
        #plotlyOutput("distPlot")
        
     ),
@@ -149,25 +149,27 @@ server <- function(input, output) {
      x <- c(1:length(liveish_data()[[1]]))
      y <- liveish_data()[[1]]
      z <- liveish_data()[[2]]
+     diff = liveish_data()[[3]]
+     
      #data <- data.frame(x, y)
      #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
      
-     data <- cbind(ts(y, x), ts(z,x))
-     colnames(data) = c('pred', 'act')
+     data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
+     colnames(data) = c('pred', 'act', 'diff')
      dygraph(data)  %>% 
        dySeries('pred', drawPoints = TRUE, pointSize = 10, strokeWidth = 0.0) %>%
-       dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0)
+       dySeries('act', drawPoints = TRUE, pointSize = 3, strokeWidth = 0.0) %>%
+       dySeries('diff')
      })
    
-   output$diffPlot <- renderDygraph({
+   #output$diffPlot <- renderDygraph({
      
      # generate bins based on input$bins from ui.R
-     x <- c(1:length(liveish_data()[[1]]))
-     diff = liveish_data()[[3]]
+  #   x <- c(1:length(liveish_data()[[1]]))
 
-     data <- ts(diff, x)
-     dygraph(data)
-   })
+   #  data <- ts(diff, x)
+  #   dygraph(data)
+  # })
    
       
    output$gauge = renderGauge({
