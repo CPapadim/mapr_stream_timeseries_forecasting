@@ -33,6 +33,7 @@ library(httr)
 library(flexdashboard)
 library(ggvis)
 library(tidyr)
+library(shinyWidgets)
 
 
 
@@ -126,10 +127,17 @@ ui <- fluidPage(
   tags$style(type="text/css",
              ".recalculating {opacity: 1.0;}",
              "#status_text {text-align:center;}",
-             "#actpredPlot {height:300px !important;}"
+             "#actpredPlot {height:300px !important;}",
+             ".stream_switch div {display:inline;}",
+             ".stream_switch p {display:inline;}"
   ),
    # Application title
    titlePanel("SCARA Robot Status"),
+  tags$div(class = 'stream_switch',
+    p('From Stream'),
+    materialSwitch(inputId = "id", label = "Live / Historical", status = "primary", right = TRUE),
+    p('From Storage')
+  ),
    br(),
    fluidRow(
     column(width = 8,
