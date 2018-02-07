@@ -97,7 +97,6 @@ predictions_all <- vector('numeric')
 actual_all <- vector('numeric')
 ap_diff <- vector('numeric')
 liveish_data <- reactive({
-  invalidateLater(100)
   data_stream = get_data()
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
@@ -110,6 +109,7 @@ liveish_data <- reactive({
     actual_all <<- tail(actual_all, 500)
     ap_diff <<- tail(ap_diff, 500)
   }
+  invalidateLater(150)
   list(predictions_all, actual_all, ap_diff)
 })
 
