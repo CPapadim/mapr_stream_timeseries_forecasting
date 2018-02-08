@@ -12,7 +12,6 @@
 #install.packages('plotly')
 #install.packages('dygraphs')
 #install.packages('flexdashboard')
-#install.packages('ggvis')
 #install.packages("shinymaterial")
 
 #pip install awscli --upgrade --user
@@ -140,9 +139,9 @@ ui <- fluidPage(
    # Application title
   #tags$div(class = 'stream_switch',
     #h1("SCARA Robot Status"),
-    #p('From Storage'),
+    #p('Stream Off'),
     #uiOutput("from_stream"), #materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE),
-    #p('From Stream')
+    #p('Stream On')
   #),
    fluidRow(
      material_page(
@@ -153,9 +152,9 @@ ui <- fluidPage(
          material_column(
            tags$div(class = 'stream_switch',
              br(),
-             p('From Storage'),
+             p('Stream Off'),
              uiOutput("from_stream"),
-             p('From Stream')
+             p('Stream On')
            )
          )
         )
