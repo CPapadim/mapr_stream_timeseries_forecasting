@@ -121,7 +121,7 @@ liveish_data <- reactive({
 
 
 # Define UI for application that draws a histogram
-ui <- material_page(
+ui <- fluidPage(
   
   #Disable graying out while refreshing realtime plots
   tags$style(type="text/css",
@@ -134,13 +134,23 @@ ui <- material_page(
   ),
    # Application title
   tags$div(class = 'stream_switch',
-    h1("SCARA Robot Status"),
+    #h1("SCARA Robot Status"),
     p('From Storage'),
     #uiOutput("from_stream"), #materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE),
     p('From Stream')
   ),
    br(),
-   material_row(material_column(uiOutput("from_stream"))),
+   fluidRow(
+     material_page(title = "SCARA Robot Status",
+       material_row(
+         material_column(
+           p('From Storage'),
+           uiOutput("from_stream"),
+           p('From Stream')
+           )
+         )
+       )
+     ),
    fluidRow(
     column(width = 8,
        dygraphOutput("actpredPlot")
