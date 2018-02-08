@@ -13,7 +13,7 @@
 #install.packages('dygraphs')
 #install.packages('flexdashboard')
 #install.packages('ggvis')
-#install.packages("shinyWidgets")
+#install.packages("shinymaterial")
 
 #pip install awscli --upgrade --user
 #export PATH=~/.local/bin:$PATH
@@ -33,7 +33,7 @@ library(httr)
 library(flexdashboard)
 library(ggvis)
 library(tidyr)
-library(shinyWidgets)
+library(shinymaterial)
 
 
 
@@ -121,7 +121,7 @@ liveish_data <- reactive({
 
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(
+ui <- material_page(
   
   #Disable graying out while refreshing realtime plots
   tags$style(type="text/css",
@@ -136,10 +136,11 @@ ui <- fluidPage(
   tags$div(class = 'stream_switch',
     h1("SCARA Robot Status"),
     p('From Storage'),
-    materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE),
+    #uiOutput("from_stream"), #materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE),
     p('From Stream')
   ),
    br(),
+   material_row(material_column(uiOutput("from_stream"))),
    fluidRow(
     column(width = 8,
        dygraphOutput("actpredPlot")
@@ -161,7 +162,12 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-  
+  output$from_stream = renderUI({
+    #switchInput(inputId = "id", value = TRUE)
+    material_switch(input_id = "from_stream", label = "", off_label = "", on_label = "",
+                    initial_value = FALSE, color = NULL)
+   #materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE)
+  })
   
   
    #output$actpredPlot <- renderPlotly({
