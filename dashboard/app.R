@@ -31,7 +31,7 @@ require(dplyr)
 require(plotly)
 library(httr)
 library(flexdashboard)
-library(ggvis)
+#library(ggvis)
 library(tidyr)
 library(shinymaterial)
 
