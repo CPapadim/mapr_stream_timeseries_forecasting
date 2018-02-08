@@ -93,17 +93,21 @@ get_prediction <- function(data_stream) {
 }
 
 
-get_data <- function() {
-  return(runif(100, 0, 5)) 
+get_data <- function(val_range) {
+  return(runif(100, 0, val_range)) 
 }
 
 
-
+user_inp_hold <- reactiveValues(from_stream = FALSE)
 predictions_all <- vector('numeric')
 actual_all <- vector('numeric')
 ap_diff <- vector('numeric')
 liveish_data <- reactive({
-  data_stream = get_data()
+  if (user_inp_hold$from_stream) {
+    data_stream = get_data(5)
+  } else {
+    data_stream = get_data(25)
+  }
   model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, mean(data_stream))
@@ -174,14 +178,17 @@ ui <- fluidPage(
   )
 )
 
+
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
+  observeEvent(input$from_stream,
+               {
+                 user_inp_hold$from_stream <<- input$from_stream
+               })
   output$from_stream = renderUI({
-    #switchInput(inputId = "id", value = TRUE)
     material_switch(input_id = "from_stream", label = "", off_label = "", on_label = "",
                     initial_value = FALSE, color = NULL)
-   #materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE)
   })
   
   
