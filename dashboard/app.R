@@ -108,7 +108,7 @@ liveish_data <- reactive({
     model_predictions = get_prediction(data_stream)
   } else {
     data_stream = 0
-    model_predictions = 0 + runif(1,-4,4)
+    model_predictions = 0# + runif(1,-4,4)
   }
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, mean(data_stream))
