@@ -6,14 +6,14 @@
 #
 #    http://shiny.rstudio.com/
 #
-#install.packages('rjson')
-#install.packages('lubridate')
-#install.packages('DT')
-#install.packages('plotly')
-#install.packages('dygraphs')
-#install.packages('flexdashboard')
+install.packages('rjson')
+install.packages('lubridate')
+install.packages('DT')
+install.packages('plotly')
+install.packages('dygraphs')
+install.packages('flexdashboard')
 #install.packages('ggvis')
-#install.packages("shinymaterial")
+install.packages("shinymaterial")
 
 #pip install awscli --upgrade --user
 #export PATH=~/.local/bin:$PATH
