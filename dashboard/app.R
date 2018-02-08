@@ -140,10 +140,14 @@ ui <- fluidPage(
     #p('From Stream')
   #),
    fluidRow(
-     material_page(title = "SCARA Robot Status", background_color = "#ffffff",
+     material_page(
+       title = "SCARA Robot Status", 
+       background_color = "#ffffff",
+       nav_bar_color = "blue lighten-1",
        material_row(
          material_column(
            tags$div(class = 'stream_switch',
+             br(),
              p('From Storage'),
              uiOutput("from_stream"),
              p('From Stream')
