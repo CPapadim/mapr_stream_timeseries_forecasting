@@ -105,10 +105,11 @@ ap_diff <- vector('numeric')
 liveish_data <- reactive({
   if (user_inp_hold$from_stream) {
     data_stream = get_data(5)
+    model_predictions = get_prediction(data_stream)
   } else {
-    data_stream = get_data(25)
+    data_stream = 0
+    model_predictions = 0 + runif(1,-4,4)
   }
-  model_predictions = get_prediction(data_stream)
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, mean(data_stream))
   ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
@@ -232,8 +233,8 @@ server <- function(input, output) {
              xaxis = list(showticklabels = FALSE))
   })
    output$gauge = renderGauge({
-     x <- liveish_data()[[1]]
-     perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
+     diff <- liveish_data()[[3]]
+     perc_outlier <- round(100*(sum(diff > 3) / length(diff)), digits = 1)
      gauge(perc_outlier,
            min = 0, 
            max = 100, 
@@ -245,8 +246,8 @@ server <- function(input, output) {
    })
    
    output$status_text = renderText({
-     x <- liveish_data()[[1]]
-     perc_outlier <- round(100*(sum(x > 5) / length(x)), digits = 1)
+     diff <- liveish_data()[[3]]
+     perc_outlier <- round(100*(sum(diff > 3) / length(diff)), digits = 1)
      
      if (perc_outlier <= 25) {
        health_label = 'Healthy'
