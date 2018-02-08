@@ -139,7 +139,6 @@ ui <- fluidPage(
     #uiOutput("from_stream"), #materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE),
     #p('From Stream')
   #),
-   br(),
    fluidRow(
      material_page(title = "SCARA Robot Status", background_color = "#ffffff",
        material_row(
