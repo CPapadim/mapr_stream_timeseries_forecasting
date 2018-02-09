@@ -89,7 +89,7 @@ get_prediction <- function(data_stream) {
 
 start_idx = 1
 get_data <- function(start_idx, num_periods) {
-  agg_dat[c(start_idx:start_idx+num_periods),2]
+  agg_dat[c(start_idx:(start_idx+num_periods-1)),2]
 }
 
 
@@ -98,8 +98,11 @@ predictions_all <- vector('numeric')
 actual_all <- vector('numeric')
 ap_diff <- vector('numeric')
 liveish_data <- reactive({
+  get_data(start_idx+1, 1)
   if (user_inp_hold$from_stream) {
-    data_stream = get_data(5)
+    data_stream = get_data(start_idx, 100)
+    start_idx <<- start_idx + 1
+    print(start_idx)
     model_predictions = get_prediction(data_stream)
   } else {
     data_stream = 0
