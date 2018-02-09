@@ -30,7 +30,6 @@ require(dplyr)
 require(plotly)
 library(httr)
 library(flexdashboard)
-#library(ggvis)
 library(tidyr)
 library(shinymaterial)
 
@@ -47,15 +46,6 @@ s3_data_stream = pipe(s3_command, open = 'r')
 readLines(s3_data_stream, n=1) #Skip header
 
 #scan(s3_data_stream, n=1, skip = 5, what= "char(0)", sep = "\n", quiet = TRUE)
-
-
-
-# Strategy
-# Pull 1024 bytes at a time.
-# Use readline to read and plot each line.
-# When we get to the last line pull from s3 again, keeping track of where we left off.
-# Need to include some ovelapping bytes because last line will likely be broken in half.
-# Readline on new file, and ignore all lines until the one where we left off.
 
 
 #s3_command = paste0('~/.local/bin/aws s3api get-object --bucket ds-cloud-cso --key mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv --range bytes=0-200 my_data_range')
@@ -79,6 +69,12 @@ hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL_2')),
 
 #json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1)))
 
+
+data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv')
+agg_dat = data.frame('Timestamp' = data_from_file[,1],
+                     'Aggregate_Readigns' = data.frame(rowSums(data_from_file[,2:length(data_from_file)])))
+colnames(agg_dat) = c('Timestamp', 'Aggregate_Readings')
+
 get_prediction <- function(data_stream) {
   
   model_input = toJSON(list(array = data_stream))
@@ -91,9 +87,9 @@ get_prediction <- function(data_stream) {
   
 }
 
-
-get_data <- function(val_range) {
-  return(runif(100, 0, val_range)) 
+start_idx = 1
+get_data <- function(start_idx, num_periods) {
+  agg_dat[c(start_idx:start_idx+num_periods),2]
 }
 
 
