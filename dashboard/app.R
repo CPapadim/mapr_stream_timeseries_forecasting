@@ -97,13 +97,16 @@ user_inp_hold <- reactiveValues(from_stream = FALSE)
 predictions_all <- vector('numeric')
 actual_all <- vector('numeric')
 ap_diff <- vector('numeric')
+num_periods = 100
 liveish_data <- reactive({
   get_data(start_idx+1, 1)
   if (user_inp_hold$from_stream) {
-    data_stream = get_data(start_idx, 100)
-    actual = get_data(start_idx, 1)
-    start_idx <<- start_idx + 1
+    data_stream = get_data(start_idx, num_periods)
+    actual = get_data(start_idx + num_periods, 1)
     model_predictions = get_prediction(data_stream)
+    start_idx <<- start_idx + 1
+    print(list(data_stream[length(data_stream)], model_predictions, actual))
+    
   } else {
     data_stream = 0
     model_predictions = 0# + runif(1,-4,4)
