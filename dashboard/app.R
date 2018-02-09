@@ -33,6 +33,7 @@ library(flexdashboard)
 library(tidyr)
 library(shinymaterial)
 
+anomaly_thresh = 90
 
 
 #scan(con,n,what="char(0)",sep="\n",quiet=TRUE,...)
@@ -117,7 +118,7 @@ liveish_data <- reactive({
     actual = get_data(start_idx + num_periods, 1)
     model_predictions = get_prediction(data_stream)
     start_idx <<- start_idx + 1
-    print(list(data_stream[length(data_stream)], model_predictions, actual))
+    #print(list(data_stream[length(data_stream)], model_predictions, actual))
     
   } else {
     data_stream = 0
@@ -138,19 +139,6 @@ liveish_data <- reactive({
   list(predictions_all, actual_all, ap_diff)
 })
 
-start_idx = length(agg_dat[,1])-111
-predictions_all <- vector('numeric')
-actual_all <- vector('numeric')
-ap_diff <- vector('numeric')
-for (i in seq(1, 10)) {
-  data_stream = get_data(start_idx, num_periods)
-  actual = get_data(start_idx + num_periods, 1)
-  model_predictions = get_prediction(data_stream)
-  start_idx <- start_idx + 1
-  predictions_all <<- c(predictions_all, model_predictions)
-  actual_all <<- c(actual_all, actual)
-  #ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
-}
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -241,11 +229,11 @@ server <- function(input, output) {
        dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
                  rightGap = 20, strokeWidth = 2) %>%
        dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', valueRange = c(-250, 250), axisLineWidth = 5.0, 
+       dyAxis('y', valueRange = c(-150, 150), axisLineWidth = 5.0, 
               axisLineColor = rgb(0.7,0.7,0.7),
               ticker = ticker_func) %>%
-       dyLimit(-90, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
-       dyLimit(90, color = rgb(0.85, 0.4, 0.4)) %>%
+       dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
+       dyLimit(anomaly_thresh, color = rgb(0.85, 0.4, 0.4)) %>%
        dyLimit(0, color = rgb(0.85, 0.85, 0.85))
 
      })
@@ -261,7 +249,7 @@ server <- function(input, output) {
   })
    output$gauge = renderGauge({
      diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(diff > 3) / length(diff)), digits = 1)
+     perc_outlier <- round(100*(sum(anomaly_thresh > 3) / length(diff)), digits = 1)
      gauge(perc_outlier,
            min = 0, 
            max = 100, 
@@ -274,7 +262,7 @@ server <- function(input, output) {
    
    output$status_text = renderText({
      diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(diff > 3) / length(diff)), digits = 1)
+     perc_outlier <- round(100*(sum(diff > anomaly_thresh) / length(diff)), digits = 1)
      
      if (perc_outlier <= 25) {
        health_label = 'Healthy'
