@@ -71,6 +71,18 @@ hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL_2')),
 
 
 data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv')
+data_from_file = data_from_file[ , -which(names(df) %in% c('X...scararobot.PositionCommand',
+                                                           'X...scararobot.Ax_J1.TorqueFeedback',
+                                                           'X...scararobot.Ax_J2.PositionCommand',
+                                                           'X...scararobot.Ax_J2.TorqueFeedback',
+                                                           'X...scararobot.Ax_J3.TorqueFeedback',
+                                                           'X...scararobot.Ax_J6.TorqueFeedback',
+                                                           'X...scararobot.ScanTimeAverage',
+                                                           'X...scararobot.Ax_J6.PositionCommand',
+                                                           'X...scararobot.Ax_J3.PositionCommand'))]
+
+
+data_from_file = data_from_file[data_from_file["X...scararobot.speed"] != 0,]
 agg_dat = data.frame('Timestamp' = data_from_file[,1],
                      'Aggregate_Readigns' = data.frame(rowSums(data_from_file[,2:length(data_from_file)])))
 colnames(agg_dat) = c('Timestamp', 'Aggregate_Readings')
@@ -126,6 +138,16 @@ liveish_data <- reactive({
   list(predictions_all, actual_all, ap_diff)
 })
 
+
+for (i in seq(1, 500)) {
+  data_stream = get_data(start_idx, num_periods)
+  actual = get_data(start_idx + num_periods, 1)
+  model_predictions = get_prediction(data_stream)
+  start_idx <<- start_idx + 1
+  predictions_all <<- c(predictions_all, model_predictions)
+  actual_all <<- c(actual_all, actual)
+  ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
+}
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
