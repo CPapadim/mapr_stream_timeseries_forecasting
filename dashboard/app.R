@@ -127,7 +127,7 @@ liveish_data <- reactive({
   }
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, actual)
-  ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
+  ap_diff <<- c(ap_diff, (model_predictions - actual))
   #line = readLines(s3_data_stream, n=1)
   #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 200) {
