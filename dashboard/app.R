@@ -112,7 +112,6 @@ actual_all <- vector('numeric')
 ap_diff <- vector('numeric')
 num_periods = 100
 liveish_data <- reactive({
-  get_data(start_idx+1, 1)
   if (user_inp_hold$from_stream) {
     data_stream = get_data(start_idx, num_periods)
     actual = get_data(start_idx + num_periods, 1)
@@ -139,16 +138,19 @@ liveish_data <- reactive({
   list(predictions_all, actual_all, ap_diff)
 })
 
-
-#for (i in seq(1, 500)) {
-#  data_stream = get_data(start_idx, num_periods)
-#  actual = get_data(start_idx + num_periods, 1)
-#  model_predictions = get_prediction(data_stream)
-#  start_idx <<- start_idx + 1
-#  predictions_all <<- c(predictions_all, model_predictions)
-#  actual_all <<- c(actual_all, actual)
-#  ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
-#}
+start_idx = length(agg_dat[,1])-111
+predictions_all <- vector('numeric')
+actual_all <- vector('numeric')
+ap_diff <- vector('numeric')
+for (i in seq(1, 10)) {
+  data_stream = get_data(start_idx, num_periods)
+  actual = get_data(start_idx + num_periods, 1)
+  model_predictions = get_prediction(data_stream)
+  start_idx <- start_idx + 1
+  predictions_all <<- c(predictions_all, model_predictions)
+  actual_all <<- c(actual_all, actual)
+  #ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
+}
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
