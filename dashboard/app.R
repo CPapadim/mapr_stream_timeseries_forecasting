@@ -71,7 +71,7 @@ hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL_2')),
 
 
 data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv')
-data_from_file = data_from_file[ , -which(names(df) %in% c('X...scararobot.PositionCommand',
+data_from_file = data_from_file[ , -which(names(data_from_file) %in% c('X...scararobot.PositionCommand',
                                                            'X...scararobot.Ax_J1.TorqueFeedback',
                                                            'X...scararobot.Ax_J2.PositionCommand',
                                                            'X...scararobot.Ax_J2.TorqueFeedback',
