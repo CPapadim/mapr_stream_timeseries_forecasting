@@ -101,15 +101,16 @@ liveish_data <- reactive({
   get_data(start_idx+1, 1)
   if (user_inp_hold$from_stream) {
     data_stream = get_data(start_idx, 100)
+    actual = get_data(start_idx, 1)
     start_idx <<- start_idx + 1
-    print(start_idx)
     model_predictions = get_prediction(data_stream)
   } else {
     data_stream = 0
     model_predictions = 0# + runif(1,-4,4)
+    actual = mean(data_stream)
   }
   predictions_all <<- c(predictions_all, model_predictions)
-  actual_all <<- c(actual_all, mean(data_stream))
+  actual_all <<- c(actual_all, actual)
   ap_diff <<- c(ap_diff, (model_predictions - mean(data_stream)))
   #line = readLines(s3_data_stream, n=1)
   #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
