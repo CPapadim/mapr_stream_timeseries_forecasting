@@ -118,6 +118,9 @@ liveish_data <- reactive({
     actual = get_data(start_idx + num_periods, 1)
     model_predictions = get_prediction(data_stream)
     start_idx <<- start_idx + 1
+    if (start_idx >= length(agg_dat[,1])-300) { # reset the stream when we get close to the end of the data
+      start_idx <<- 1
+    }
     #print(list(data_stream[length(data_stream)], model_predictions, actual))
     
   } else {
