@@ -71,11 +71,11 @@ url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-posit
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
 
 # For testing in RStudio
-#data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
-#                          stringsAsFactors = FALSE)
-# For deploying (paths are different in deploy sessions)
-data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
+data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
                           stringsAsFactors = FALSE)
+# For deploying (paths are different in deploy sessions)
+#data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
+#                          stringsAsFactors = FALSE)
 data_from_file = data_from_file[ , -which(names(data_from_file) %in% c('X...scararobot.PositionCommand',
                                                            'X...scararobot.Ax_J1.TorqueFeedback',
                                                            'X...scararobot.Ax_J2.PositionCommand',
@@ -212,7 +212,7 @@ server <- function(input, output) {
                })
   output$from_stream = renderUI({
     material_switch(input_id = "from_stream", label = "", off_label = "", on_label = "",
-                    initial_value = FALSE, color = NULL)
+                    initial_value = user_inp_hold$from_stream, color = NULL)
   })
   
   output$reset = renderUI({
