@@ -72,7 +72,7 @@ hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `
 
 # For deploying dashboard
 data_dir = '/tmp/mapr_stream_timeseries_forecasting/tmp/data/'
-if (length(list.files(data_file)) == 0) {
+if (length(list.files(data_dir)) == 0) {
   # For testing in RStudio (paths are different in deploy sessions)
   data_dir = '~/mapr_stream_timeseries_forecasting/tmp/data/'
 }
