@@ -76,7 +76,7 @@ tryCatch({
   data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
                          stringsAsFactors = FALSE)
   },
-  error = {
+  error = function(cond) {
   # For deploying (paths are different in deploy sessions)
   data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
                              stringsAsFactors = FALSE)
@@ -231,9 +231,7 @@ server <- function(input, output) {
            # is a reactive value that does NOT cause an error
            # Otherwise the block won't ever update on its own
            
-           # generate bins based on input$bins from ui.R
            x <- c(1:length(liveish_data()[[1]]))
-          
            diff = liveish_data()[[3]]
            data <- ts(diff, x)
            
