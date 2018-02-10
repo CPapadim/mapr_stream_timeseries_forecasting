@@ -16,7 +16,6 @@
 
 
 library(dygraphs)
-#library(RCurl)
 library(stringr)
 library(lubridate)
 library(shiny)
@@ -67,7 +66,7 @@ anomaly_thresh = 40
 
 
 
-url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v3/'
+url = Sys.getenv('MODEL_ENDPOINT')
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
 
 # For deploying dashboard
