@@ -222,15 +222,17 @@ server <- function(input, output) {
    output$actpredPlot <- renderDygraph({
      tryCatch(
        {
-           print('Im trycatching')
-           if ((start_idx %% 10) == 0) {
-                ggg = nnn
-           }
+           # Note:  tryCatch only recovers plot if the first line in this block
+           # is a reactive value that does NOT cause an error
+           # Otherwise the block won't ever update on its own
+           
            # generate bins based on input$bins from ui.R
            x <- c(1:length(liveish_data()[[1]]))
+          
            diff = liveish_data()[[3]]
            data <- ts(diff, x)
-      
+           
+
            ticker_func = paste0("function(){ return  [{v: 0, label: '0'}, {v: ", anomaly_thresh, ", label: ", anomaly_thresh, 
                                 "}, {v: -", anomaly_thresh, ", label: '-", anomaly_thresh, "'}]; }")
            dy_plot = dygraph(data)  %>%
@@ -243,8 +245,7 @@ server <- function(input, output) {
              dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
              dyLimit(anomaly_thresh, color = rgb(0.85, 0.4, 0.4)) %>%
              dyLimit(0, color = rgb(0.85, 0.85, 0.85))
-        },
-        finally = {print('hi')}
+        }
        )
      })
    
@@ -261,7 +262,11 @@ server <- function(input, output) {
      
      tryCatch(
        {
+         # Note:  tryCatch only recovers plot if the first line in this block
+         # is a reactive value that does NOT cause an error
+         # Otherwise the block won't ever update on its own
          diff <- liveish_data()[[3]]
+         
          perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
          gauge(perc_outlier,
                min = 0, 
