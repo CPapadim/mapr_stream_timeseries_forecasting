@@ -70,12 +70,14 @@ anomaly_thresh = 40
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v3/'
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
 
-# For testing in RStudio
-#data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
-#                          stringsAsFactors = FALSE)
-# For deploying (paths are different in deploy sessions)
-data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
-                          stringsAsFactors = FALSE)
+# For deploying dashboard
+data_dir = '/tmp/mapr_stream_timeseries_forecasting/tmp/data/'
+if (length(list.files(data_dir)) == 0) {
+  # For testing in RStudio (paths are different in deploy sessions)
+  data_dir = '~/mapr_stream_timeseries_forecasting/tmp/data/'
+}
+
+data_from_file = read.csv(paste0(data_dir, 'part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv') , stringsAsFactors = FALSE)
 data_from_file = data_from_file[ , -which(names(data_from_file) %in% c('X...scararobot.PositionCommand',
                                                            'X...scararobot.Ax_J1.TorqueFeedback',
                                                            'X...scararobot.Ax_J2.PositionCommand',
@@ -121,17 +123,27 @@ liveish_data <- reactive({
   if (user_inp_hold$from_stream) {
     data_stream = get_data(start_idx, num_periods)
     actual = get_data(start_idx + num_periods, 1)
-    model_predictions = get_prediction(data_stream)
+    
+    # Get model prediction
+    model_predictions <- NULL
+    attempt <- 1
+    while( is.null(model_predictions) && attempt <= 3 ) { # In case we have connection issues, try a few times then give up
+                                                          # and move on to next data point
+      attempt <- attempt + 1
+      try({
+        model_predictions = get_prediction(data_stream)
+        
+      })
+    } 
     start_idx <<- start_idx + 1
     if (start_idx >= length(agg_dat[,1])-300) { # reset the stream when we get close to the end of the data
       start_idx <<- 1
     }
-    #print(list(data_stream[length(data_stream)], model_predictions, actual))
-    
+
   } else {
     data_stream = 0
     model_predictions = 0
-    actual = mean(data_stream)
+    actual = 0
   }
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, actual)
@@ -220,25 +232,31 @@ server <- function(input, output) {
   })
   
    output$actpredPlot <- renderDygraph({
+     tryCatch(
+       {
+           # Note:  tryCatch only recovers plot if the first line in this block
+           # is a reactive value that does NOT cause an error
+           # Otherwise the block won't ever update on its own
+           
+           x <- c(1:length(liveish_data()[[1]]))
+           diff = liveish_data()[[3]]
+           data <- ts(diff, x)
+           
 
-      # generate bins based on input$bins from ui.R
-     x <- c(1:length(liveish_data()[[1]]))
-     diff = liveish_data()[[3]]
-     data <- ts(diff, x)
-
-     ticker_func = paste0("function(){ return  [{v: 0, label: '0'}, {v: ", anomaly_thresh, ", label: ", anomaly_thresh, 
-                          "}, {v: -", anomaly_thresh, ", label: '-", anomaly_thresh, "'}]; }")
-     dy_plot = dygraph(data)  %>%
-       dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
-                 rightGap = 20, strokeWidth = 2) %>%
-       dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', valueRange = c(-150, 150), axisLineWidth = 5.0, 
-              axisLineColor = rgb(0.7,0.7,0.7),
-              ticker = ticker_func) %>%
-       dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
-       dyLimit(anomaly_thresh, color = rgb(0.85, 0.4, 0.4)) %>%
-       dyLimit(0, color = rgb(0.85, 0.85, 0.85))
-
+           ticker_func = paste0("function(){ return  [{v: 0, label: '0'}, {v: ", anomaly_thresh, ", label: ", anomaly_thresh, 
+                                "}, {v: -", anomaly_thresh, ", label: '-", anomaly_thresh, "'}]; }")
+           dy_plot = dygraph(data)  %>%
+             dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
+                       rightGap = 20, strokeWidth = 2) %>%
+             dyAxis('x', drawGrid = FALSE) %>%
+             dyAxis('y', valueRange = c(-150, 150), axisLineWidth = 5.0, 
+                    axisLineColor = rgb(0.7,0.7,0.7),
+                    ticker = ticker_func) %>%
+             dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
+             dyLimit(anomaly_thresh, color = rgb(0.85, 0.4, 0.4)) %>%
+             dyLimit(0, color = rgb(0.85, 0.85, 0.85))
+        }
+       )
      })
    
    
@@ -251,28 +269,45 @@ server <- function(input, output) {
              xaxis = list(showticklabels = FALSE))
   })
    output$gauge = renderGauge({
-     diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
-     gauge(perc_outlier,
-           min = 0, 
-           max = 100, 
-           sectors = gaugeSectors(success = c(0, 25), 
-                                  warning = c(25, 50),
-                                  danger = c(50, 100)),
-           symbol = '%'
-     )
+     
+     tryCatch(
+       {
+         # Note:  tryCatch only recovers plot if the first line in this block
+         # is a reactive value that does NOT cause an error
+         # Otherwise the block won't ever update on its own
+         diff <- liveish_data()[[3]]
+         
+         perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
+         gauge(perc_outlier,
+               min = 0, 
+               max = 100, 
+               sectors = gaugeSectors(success = c(0, 25), 
+                                      warning = c(25, 50),
+                                      danger = c(50, 100)),
+               symbol = '%'
+         )
+       }
+     ) 
+     
    })
    
    output$status_text = renderText({
-     diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
-     
-     if (perc_outlier <= 25) {
-       health_label = 'Healthy'
-     } else if (perc_outlier <= 50) {
-       health_label = 'Warning!'
-     } else {health_label = 'Failure!!'}
-     health_label
+     tryCatch(
+       {
+         # Note:  tryCatch only recovers plot if the first line in this block
+         # is a reactive value that does NOT cause an error
+         # Otherwise the block won't ever update on its own
+         diff <- liveish_data()[[3]]
+         perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
+         
+         if (perc_outlier <= 25) {
+           health_label = 'Healthy'
+         } else if (perc_outlier <= 50) {
+           health_label = 'Warning!'
+         } else {health_label = 'Failure!!'}
+         health_label
+       }
+     )
      
    })
    
