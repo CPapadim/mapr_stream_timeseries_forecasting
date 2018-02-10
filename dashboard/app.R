@@ -153,7 +153,8 @@ ui <- fluidPage(
              "#actpredPlot {height:300px !important;}",
              ".stream_switch div {display:inline;}",
              ".stream_switch p {display:inline; font-weight:bold;}",
-             ".stream_switch h1 {display:inline; padding-right: 100px}"
+             ".stream_switch h1 {display:inline; padding-right: 100px}",
+             "#maintenance {height: 310px !important;}"
   ),
    # Application title
   #tags$div(class = 'stream_switch',
@@ -175,6 +176,9 @@ ui <- fluidPage(
              uiOutput("from_stream"),
              p('Stream On')
            )
+         ),
+         material_column(
+           uiOutput("reset")
          )
         )
       )
@@ -205,9 +209,18 @@ server <- function(input, output) {
                {
                  user_inp_hold$from_stream <<- input$from_stream
                })
+  
+  observeEvent(input$reset_button,
+               {
+                 start_idx <<- 1
+               })
   output$from_stream = renderUI({
     material_switch(input_id = "from_stream", label = "", off_label = "", on_label = "",
                     initial_value = FALSE, color = NULL)
+  })
+  
+  output$reset = renderUI({
+    material_button(input_id = "reset_button", label = "Reset", icon = "replay")
   })
   
   
