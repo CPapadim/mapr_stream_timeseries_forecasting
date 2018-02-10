@@ -71,11 +71,11 @@ url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-posit
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
 
 # For testing in RStudio
-#data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
-#                          stringsAsFactors = FALSE)
-# For deploying (paths are different in deploy sessions)
-data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
+data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
                           stringsAsFactors = FALSE)
+# For deploying (paths are different in deploy sessions)
+#data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
+#                          stringsAsFactors = FALSE)
 data_from_file = data_from_file[ , -which(names(data_from_file) %in% c('X...scararobot.PositionCommand',
                                                            'X...scararobot.Ax_J1.TorqueFeedback',
                                                            'X...scararobot.Ax_J2.PositionCommand',
@@ -220,25 +220,32 @@ server <- function(input, output) {
   })
   
    output$actpredPlot <- renderDygraph({
-
-      # generate bins based on input$bins from ui.R
-     x <- c(1:length(liveish_data()[[1]]))
-     diff = liveish_data()[[3]]
-     data <- ts(diff, x)
-
-     ticker_func = paste0("function(){ return  [{v: 0, label: '0'}, {v: ", anomaly_thresh, ", label: ", anomaly_thresh, 
-                          "}, {v: -", anomaly_thresh, ", label: '-", anomaly_thresh, "'}]; }")
-     dy_plot = dygraph(data)  %>%
-       dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
-                 rightGap = 20, strokeWidth = 2) %>%
-       dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', valueRange = c(-150, 150), axisLineWidth = 5.0, 
-              axisLineColor = rgb(0.7,0.7,0.7),
-              ticker = ticker_func) %>%
-       dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
-       dyLimit(anomaly_thresh, color = rgb(0.85, 0.4, 0.4)) %>%
-       dyLimit(0, color = rgb(0.85, 0.85, 0.85))
-
+     tryCatch(
+       {
+           print('Im trycatching')
+           if ((start_idx %% 10) == 0) {
+                ggg = nnn
+           }
+           # generate bins based on input$bins from ui.R
+           x <- c(1:length(liveish_data()[[1]]))
+           diff = liveish_data()[[3]]
+           data <- ts(diff, x)
+      
+           ticker_func = paste0("function(){ return  [{v: 0, label: '0'}, {v: ", anomaly_thresh, ", label: ", anomaly_thresh, 
+                                "}, {v: -", anomaly_thresh, ", label: '-", anomaly_thresh, "'}]; }")
+           dy_plot = dygraph(data)  %>%
+             dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
+                       rightGap = 20, strokeWidth = 2) %>%
+             dyAxis('x', drawGrid = FALSE) %>%
+             dyAxis('y', valueRange = c(-150, 150), axisLineWidth = 5.0, 
+                    axisLineColor = rgb(0.7,0.7,0.7),
+                    ticker = ticker_func) %>%
+             dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
+             dyLimit(anomaly_thresh, color = rgb(0.85, 0.4, 0.4)) %>%
+             dyLimit(0, color = rgb(0.85, 0.85, 0.85))
+        },
+        finally = {print('hi')}
+       )
      })
    
    
@@ -251,16 +258,22 @@ server <- function(input, output) {
              xaxis = list(showticklabels = FALSE))
   })
    output$gauge = renderGauge({
-     diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
-     gauge(perc_outlier,
-           min = 0, 
-           max = 100, 
-           sectors = gaugeSectors(success = c(0, 25), 
-                                  warning = c(25, 50),
-                                  danger = c(50, 100)),
-           symbol = '%'
-     )
+     
+     tryCatch(
+       {
+         diff <- liveish_data()[[3]]
+         perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
+         gauge(perc_outlier,
+               min = 0, 
+               max = 100, 
+               sectors = gaugeSectors(success = c(0, 25), 
+                                      warning = c(25, 50),
+                                      danger = c(50, 100)),
+               symbol = '%'
+         )
+       }
+     ) 
+     
    })
    
    output$status_text = renderText({
