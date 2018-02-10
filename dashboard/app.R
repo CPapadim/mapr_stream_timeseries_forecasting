@@ -130,10 +130,10 @@ liveish_data <- reactive({
     while( is.null(model_predictions) && attempt <= 3 ) { # In case we have connection issues, try a few times then give up
                                                           # and move on to next data point
       attempt <- attempt + 1
-      try(
+      try({
         model_predictions = get_prediction(data_stream)
         
-      )
+      })
     } 
     start_idx <<- start_idx + 1
     if (start_idx >= length(agg_dat[,1])-300) { # reset the stream when we get close to the end of the data
