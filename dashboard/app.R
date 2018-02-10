@@ -14,11 +14,7 @@
 #install.packages('flexdashboard')
 #install.packages("shinymaterial")
 
-#pip install awscli --upgrade --user
-#export PATH=~/.local/bin:$PATH
-# Set these and aws cli will know to use them:
-#AWS_ACCESS_KEY_ID
-#AWS_SECRET_ACCESS_KEY
+
 library(dygraphs)
 #library(RCurl)
 library(stringr)
@@ -35,37 +31,43 @@ library(shinymaterial)
 
 anomaly_thresh = 40
 
+###################
+# S3 Connectivity #
+###################
 
-#scan(con,n,what="char(0)",sep="\n",quiet=TRUE,...)
-data_url = 's3://ds-cloud-cso/mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
-#data_url = 's3://ds-cloud-cso/mapr-demo/tmp.csv'
+# pip install awscli --upgrade --user
+# export PATH=~/.local/bin:$PATH
+# Set these and aws cli will know to use them:
+#    AWS_ACCESS_KEY_ID
+#    AWS_SECRET_ACCESS_KEY
 
-s3_command = paste0('~/.local/bin/aws s3 cp ', data_url, ' -') # The dash at the end creates a stream rather than downloading
-#s3_command = paste0('~/.local/bin/aws s3api get-object --bucket ds-cloud-cso --key mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv --range bytes=0-99999 my_data_range')
-s3_data_stream = pipe(s3_command, open = 'r')
-#csv_dat = read.csv(s3_data_stream)
-readLines(s3_data_stream, n=1) #Skip header
+# Data URL
+# data_url = 's3://ds-cloud-cso/mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
 
-#scan(s3_data_stream, n=1, skip = 5, what= "char(0)", sep = "\n", quiet = TRUE)
+# Command to Get an S3 file
+# s3_command = paste0('~/.local/bin/aws s3 cp ', data_url, ' -') # The dash at the end creates a stream rather than downloading
 
+# Command to Get a piece of a file
+# s3_command = paste0('~/.local/bin/aws s3api get-object --bucket ds-cloud-cso --key mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv --range bytes=0-99999 my_data_range')
 
-#s3_command = paste0('~/.local/bin/aws s3api get-object --bucket ds-cloud-cso --key mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv --range bytes=0-200 my_data_range')
-#s3_data_stream = pipe(s3_command, open = 'r')
-#read.csv('my_data_range')[4,6]
-#scan(s3_data_stream, n=1, skip = 5, what= "char(0)", sep = "\n", quiet = TRUE)
-
-#hold = read.csv('my_data_range')
+# Open a connection to the s3 file
+# s3_data_stream = pipe(s3_command, open = 'r')
+# csv_dat = read.csv(s3_data_stream)
 
 
-#data_url = 'https://ds-cloud-cso.s3.amazonaws.com/mapr-demo/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
-#data_url = 'https://ds-cloud-cso.s3.amazonaws.com/mapr-demo/tmp.csv'
-#s3_data_stream = url(data_url, blocking = FALSE, open = 'r')
-#s3_data_stream = url(data_url)
-#scan(s3_data_stream, n=151, what= "char(0)", sep = "\n", quiet = TRUE)
+# Read one line
+# readLines(s3_data_stream, n=1)
+
+# Read a range of lines
+# scan(s3_data_stream, n=1, skip = 5, what= "char(0)", sep = "\n", quiet = TRUE)
+
+#########################
+# S3 Connectivity - End #
+#########################
+
 
 
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v3/'
-#url = 'https://mapr-demo.datascience.com/deploy/deploy-scara-robot-anomaly-detector-24864-v3/'
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL_2')), `Content-Type`="application/json")
 
 #json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1)))
