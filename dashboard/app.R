@@ -282,15 +282,22 @@ server <- function(input, output) {
    })
    
    output$status_text = renderText({
-     diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
-     
-     if (perc_outlier <= 25) {
-       health_label = 'Healthy'
-     } else if (perc_outlier <= 50) {
-       health_label = 'Warning!'
-     } else {health_label = 'Failure!!'}
-     health_label
+     tryCatch(
+       {
+         # Note:  tryCatch only recovers plot if the first line in this block
+         # is a reactive value that does NOT cause an error
+         # Otherwise the block won't ever update on its own
+         diff <- liveish_data()[[3]]
+         perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
+         
+         if (perc_outlier <= 25) {
+           health_label = 'Healthy'
+         } else if (perc_outlier <= 50) {
+           health_label = 'Warning!'
+         } else {health_label = 'Failure!!'}
+         health_label
+       }
+     )
      
    })
    
