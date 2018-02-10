@@ -71,15 +71,13 @@ url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-posit
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
 
 # For deploying dashboard
-data_file = '/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
-print(list.files(data_file))
+data_dir = '/tmp/mapr_stream_timeseries_forecasting/tmp/data/'
 if (length(list.files(data_file)) == 0) {
   # For testing in RStudio (paths are different in deploy sessions)
-  data_file = '~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv'
-  
+  data_dir = '~/mapr_stream_timeseries_forecasting/tmp/data/'
 }
 
-data_from_file = read.csv(data_file, stringsAsFactors = FALSE)
+data_from_file = read.csv(paste0(data_dir, 'part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv') , stringsAsFactors = FALSE)
 data_from_file = data_from_file[ , -which(names(data_from_file) %in% c('X...scararobot.PositionCommand',
                                                            'X...scararobot.Ax_J1.TorqueFeedback',
                                                            'X...scararobot.Ax_J2.PositionCommand',
