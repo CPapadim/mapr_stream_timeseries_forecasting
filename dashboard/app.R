@@ -33,7 +33,7 @@ library(flexdashboard)
 library(tidyr)
 library(shinymaterial)
 
-anomaly_thresh = 90
+anomaly_thresh = 40
 
 
 #scan(con,n,what="char(0)",sep="\n",quiet=TRUE,...)
@@ -249,7 +249,7 @@ server <- function(input, output) {
   })
    output$gauge = renderGauge({
      diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(anomaly_thresh > 3) / length(diff)), digits = 1)
+     perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
      gauge(perc_outlier,
            min = 0, 
            max = 100, 
@@ -262,7 +262,7 @@ server <- function(input, output) {
    
    output$status_text = renderText({
      diff <- liveish_data()[[3]]
-     perc_outlier <- round(100*(sum(diff > anomaly_thresh) / length(diff)), digits = 1)
+     perc_outlier <- round(100*(sum(abs(diff) > anomaly_thresh) / length(diff)), digits = 1)
      
      if (perc_outlier <= 25) {
        health_label = 'Healthy'
