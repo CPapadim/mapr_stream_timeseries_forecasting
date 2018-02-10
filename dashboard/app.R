@@ -224,12 +224,13 @@ server <- function(input, output) {
      data <- ts(diff, x)
      #colnames(data) = c('diff')
 
-     ticker_func = "function(){ return  [{v: 0, label: '0'}, {v: 80, label: '80'}, {v: -80, label: '-80'}]; }"
+     ticker_func = paste0("function(){ return  [{v: 0, label: '0'}, {v: ", anomaly_thresh, ", label: ", anomaly_thresh, 
+                          "}, {v: -", anomaly_thresh, ", label: '-", anomaly_thresh, "'}]; }")
      dy_plot = dygraph(data)  %>%
        dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
                  rightGap = 20, strokeWidth = 2) %>%
        dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', valueRange = c(-150, 150), axisLineWidth = 5.0, 
+       dyAxis('y', valueRange = c(-140, 140), axisLineWidth = 5.0, 
               axisLineColor = rgb(0.7,0.7,0.7),
               ticker = ticker_func) %>%
        dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
