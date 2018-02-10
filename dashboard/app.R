@@ -70,9 +70,6 @@ anomaly_thresh = 40
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v3/'
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL_2')), `Content-Type`="application/json")
 
-#json = toJSON(list(array = c(1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1,1,2,3,4,5,6,7,8,9,1)))
-
-
 data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
                           stringsAsFactors = FALSE)
 data_from_file = data_from_file[ , -which(names(data_from_file) %in% c('X...scararobot.PositionCommand',
@@ -91,6 +88,7 @@ agg_dat = data.frame('Timestamp' = format(as.POSIXct(gsub("T", " ", substr(data_
 colnames(agg_dat) = c('Timestamp', 'Aggregate_Readings')
 agg_dat = agg_dat[order(agg_dat$Timestamp),]
 
+
 get_prediction <- function(data_stream) {
   
   model_input = toJSON(list(array = data_stream))
@@ -102,6 +100,7 @@ get_prediction <- function(data_stream) {
   return(fromJSON(httr::content(req, as = "text", encoding = 'UTF-8')))
   
 }
+
 
 start_idx = 1
 get_data <- function(start_idx, num_periods) {
@@ -127,14 +126,12 @@ liveish_data <- reactive({
     
   } else {
     data_stream = 0
-    model_predictions = 0# + runif(1,-4,4)
+    model_predictions = 0
     actual = mean(data_stream)
   }
   predictions_all <<- c(predictions_all, model_predictions)
   actual_all <<- c(actual_all, actual)
   ap_diff <<- c(ap_diff, (model_predictions - actual))
-  #line = readLines(s3_data_stream, n=1)
-  #predictions_all <<- c(predictions_all, strsplit(line, ',')[[1]][10])
   if (length(predictions_all) > 200) {
     predictions_all <<- tail(predictions_all, 200)
     actual_all <<- tail(actual_all, 200)
@@ -158,13 +155,6 @@ ui <- fluidPage(
              ".stream_switch h1 {display:inline; padding-right: 100px}",
              "#maintenance {height: 310px !important;}"
   ),
-   # Application title
-  #tags$div(class = 'stream_switch',
-    #h1("SCARA Robot Status"),
-    #p('Stream Off'),
-    #uiOutput("from_stream"), #materialSwitch(inputId = "from_stream", label = "", status = "primary", right = TRUE),
-    #p('Stream On')
-  #),
    fluidRow(
      material_page(
        title = "SCARA Robot Status", 
@@ -225,22 +215,12 @@ server <- function(input, output) {
     material_button(input_id = "reset_button", label = "Reset", icon = "replay")
   })
   
-  
-   #output$actpredPlot <- renderPlotly({
    output$actpredPlot <- renderDygraph({
 
       # generate bins based on input$bins from ui.R
      x <- c(1:length(liveish_data()[[1]]))
-     #y <- liveish_data()[[1]]
-     #z <- liveish_data()[[2]]
      diff = liveish_data()[[3]]
-
-     #data <- data.frame(x, y)
-     #p <- plot_ly(data, x = ~x, y = ~y, type = 'scatter', mode = 'lines')
-     #data <- cbind(ts(y, x), ts(z,x), ts(diff, x))
-     #colnames(data) = c('pred', 'act', 'diff')
      data <- ts(diff, x)
-     #colnames(data) = c('diff')
 
      ticker_func = paste0("function(){ return  [{v: 0, label: '0'}, {v: ", anomaly_thresh, ", label: ", anomaly_thresh, 
                           "}, {v: -", anomaly_thresh, ", label: '-", anomaly_thresh, "'}]; }")
