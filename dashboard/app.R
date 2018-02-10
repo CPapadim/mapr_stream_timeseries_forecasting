@@ -230,7 +230,7 @@ server <- function(input, output) {
        dyOptions(drawGrid = FALSE, stemPlot = TRUE, drawXAxis = FALSE, 
                  rightGap = 20, strokeWidth = 2) %>%
        dyAxis('x', drawGrid = FALSE) %>%
-       dyAxis('y', valueRange = c(-140, 140), axisLineWidth = 5.0, 
+       dyAxis('y', valueRange = c(-150, 150), axisLineWidth = 5.0, 
               axisLineColor = rgb(0.7,0.7,0.7),
               ticker = ticker_func) %>%
        dyLimit(-anomaly_thresh, color = rgb(0.85, 0.4, 0.4), label = "Anomaly Threshold") %>% 
