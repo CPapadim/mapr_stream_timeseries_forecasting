@@ -70,16 +70,23 @@ anomaly_thresh = 40
 url = 'https://demo-next.datascience.com/deploy/deploy-anomalous-scara-arm-position-detector-380392-v3/'
 hdr=c(`Cookie`=paste0('datascience-platform=',Sys.getenv('MODEL_CREDENTIAL')), `Content-Type`="application/json")
 
-
+#tryCatch({
+#  # For deploying (paths are different in deploy sessions)
+#  data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
+#                            stringsAsFactors = FALSE)
+#}, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
 tryCatch({
-  # For testing in RStudio
-  data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
-                         stringsAsFactors = FALSE)
-  },
-  error = function(cond) {
   # For deploying (paths are different in deploy sessions)
   data_from_file = read.csv('/tmp/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
-                             stringsAsFactors = FALSE)
+                              stringsAsFactors = FALSE)
+ 
+  },
+  error = function(cond) {},
+  warning = function(cond) {},
+  finally = {
+  # For testing in RStudio
+  data_from_file = read.csv('~/mapr_stream_timeseries_forecasting/tmp/data/part-00000-45866095-f76d-4f6c-ba2d-a07f0ab2dc04.csv',
+                              stringsAsFactors = FALSE)
   })
 data_from_file = data_from_file[ , -which(names(data_from_file) %in% c('X...scararobot.PositionCommand',
                                                            'X...scararobot.Ax_J1.TorqueFeedback',
