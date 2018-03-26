@@ -32,8 +32,11 @@ When anomalies are detected, alerts can be sent to trigger maintenance request b
    
 **model/  directory** - Contains the saved model weights of the tensorflow model
 
-**dasboard/ directory** - Contains a health dashboard that shows how 
+**dasboard/ directory** - Contains a health dashboard that shows the difference between predicted (healthy) and actual values of the sensor readings.  Anomalies here could mean that the SCARA Robot is beginning to fail.
 
+**dashboard/app.R** - Code for the dashboard mentioned above.  Points to the data source and may need to be edited (either to the Model API directly or to an output of a kafka stream)
+
+**dashboard/requirements_R.txt** - Package requirements for dashboard
 
 
 
