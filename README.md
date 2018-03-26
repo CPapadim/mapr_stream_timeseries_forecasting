@@ -20,8 +20,8 @@ Historical_Analysis_and_Model_Training.ipynb - Explore data, engineer features, 
 
 deploy-model.py - Deploy the serialized tensorflow model on DataScience.com ReST API
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Input:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;array of the last 100 readings of the sensor
+> Input:<br>
+>> array of the last 100 readings of the sensor
   
   ```
   {"array: [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]}
