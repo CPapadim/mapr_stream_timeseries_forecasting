@@ -20,15 +20,15 @@ Historical_Analysis_and_Model_Training.ipynb - Explore data, engineer features, 
 
 deploy-model.py - Deploy the serialized tensorflow model on DataScience.com ReST API
 
-  Input:
-    array of the last 100 readings of the sensor
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Input:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;array of the last 100 readings of the sensor
   
   ```
   {"array: [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]}
   ```
   
-  Output:
-    model prediction for what the next sensor reading should be if the SCARA Robot is behaving properly and is healthy
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model prediction for what the next sensor reading should be if the SCARA Robot is behaving properly and is healthy
    
    
 
