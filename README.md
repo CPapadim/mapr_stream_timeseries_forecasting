@@ -40,3 +40,13 @@ When anomalies are detected, alerts can be sent to trigger maintenance request b
 
 
 
+# MapR Streams Files
+
+This project can optionally integrate MapR Streaming data.  The following scripts can be used for that
+
+**Sensor_XML2MaprStreams_producer.py** - Producer script to take data and post it onto the streams server.
+
+**Stream_IoT_Prediction_consumer.py** - Consumer script that can read the data from the streams server and take numerous actions, such as calling the DataScience.com ReST API model for predictions, and writing model inputs and predictions to a database for the dashboard to consume.
+
+**mapr_kafka_rest.py** - Helper script containing functions used by the producer and consumer scripts.
+
